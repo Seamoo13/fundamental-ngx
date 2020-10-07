@@ -4,7 +4,7 @@ import {
     ElementRef, AfterContentInit, Output, EventEmitter,
     HostListener, ChangeDetectorRef, OnInit, AfterViewInit, ContentChild, Self, Optional, SkipSelf, Host, OnDestroy
 } from '@angular/core';
-import { FocusKeyManager, FocusOrigin } from '@angular/cdk/a11y';
+import { FocusKeyManager } from '@angular/cdk/a11y';
 import { UP_ARROW, DOWN_ARROW, ENTER, SPACE } from '@angular/cdk/keycodes';
 import { NgControl, NgForm } from '@angular/forms';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -135,6 +135,10 @@ export class ListComponent extends CollectionBaseInput implements OnInit, AfterV
     set navigated(value: boolean) {
         this._navigated = value;
         this.itemEl.nativeElement.querySelector('ul').classList.add('fd-list--navigation');
+
+        if (this.hasObject) {
+            this.itemEl.nativeElement.querySelector('ul').classList.add('fd-list--navigation-object');
+        }
     }
 
 
@@ -168,7 +172,7 @@ export class ListComponent extends CollectionBaseInput implements OnInit, AfterV
 
     set hasObject(value: boolean) {
         this._hasObject = value;
-        this.itemEl.nativeElement.querySelector('ul').classList.add('fd-list--object');
+        this.itemEl.nativeElement.querySelector('ul').classList.add('fd-object-list');
     }
 
     @Input()
@@ -179,6 +183,24 @@ export class ListComponent extends CollectionBaseInput implements OnInit, AfterV
     /** setter and getter for radio button and checkbox*/
     set value(value: any) {
         super.setValue(value);
+    }
+
+    /** setter and getter for row level Selection*/
+    @Input('rowSelection')
+    get selectRow(): boolean {
+        return this._rowSelection;
+    }
+
+    set selectRow(value: boolean) {
+        this._rowSelection = value;
+        if (this._rowSelection) {
+            console.log('slectiomde', this.navigated);
+            this.selection = true;
+            this.itemEl.nativeElement.querySelector('ul').classList.add('fd-list--selection-row');
+            if (this.navigated) {
+                this.itemEl.nativeElement.querySelector('ul').classList.remove('fd-list--selection-row');
+            }
+        }
     }
 
     /**
@@ -257,6 +279,12 @@ export class ListComponent extends CollectionBaseInput implements OnInit, AfterV
      * for all the items
     */
     private _navigated: boolean;
+
+    /**@hidden
+     * Whether row level selection mode is enabled to list component
+     * for all the items
+    */
+    private _rowSelection: boolean;
 
     /**@hidden
      * Whether Navigation mode is included to list component
@@ -362,7 +390,6 @@ export class ListComponent extends CollectionBaseInput implements OnInit, AfterV
             }
         });
         this.ListItems.forEach((item) => {
-            console.log('this._partialNavigation==>', this._partialNavigation);
             if (!this._partialNavigation) {
                 item.navigated = this.navigated;
                 item.navigationIndicator = this.navigationIndicator;
@@ -371,10 +398,12 @@ export class ListComponent extends CollectionBaseInput implements OnInit, AfterV
             item.contentDensity = this.contentDensity;
             item._isCompact = this._isCompact;
             item.selectionMode = this.selectionMode;
+            item.selectRow = this.selectRow;
             item._hasByLine = this.hasByLine;
             item._noSeperator = this.noSeperator;
             this.stateChanges.next(item);
         });
+
 
     }
 
@@ -397,7 +426,6 @@ export class ListComponent extends CollectionBaseInput implements OnInit, AfterV
                 }
             });
             items.forEach((item) => {
-                console.log('this._partialNavigation==>', this._partialNavigation);
                 if (!this._partialNavigation) {
                     item.navigated = this.navigated;
                     item.navigationIndicator = this.navigationIndicator;
@@ -405,6 +433,7 @@ export class ListComponent extends CollectionBaseInput implements OnInit, AfterV
                 }
                 item.contentDensity = this.contentDensity;
                 item._isCompact = this._isCompact;
+                item.selectRow = this.selectRow;
                 item.selectionMode = this.selectionMode;
                 item._hasByLine = this.hasByLine;
                 item._noSeperator = this.noSeperator;
@@ -412,6 +441,7 @@ export class ListComponent extends CollectionBaseInput implements OnInit, AfterV
             });
 
         });
+
     }
 
     /** @hidden */
@@ -445,6 +475,9 @@ export class ListComponent extends CollectionBaseInput implements OnInit, AfterV
                 this._updateNavigation(event);
                 return false;
             }
+            // if (event.keyCode === SHIFT || event.keyCode === UP_ARROW) {
+            //     return false;
+            // }
         }
     }
 
@@ -501,6 +534,7 @@ export class ListComponent extends CollectionBaseInput implements OnInit, AfterV
      * event:any to avoid code duplication**/
     @HostListener('click', ['$event'])
     _updateNavigation(event: any): void {
+        console.log('event.target..', event.target);
         this.ListItems.forEach((item) => {
             if (item.anchor !== undefined) {
                 item.anchor.nativeElement.classList.remove('is-navigated');
@@ -508,9 +542,14 @@ export class ListComponent extends CollectionBaseInput implements OnInit, AfterV
         });
         if (event.target !== null && event.target.tagName.toLowerCase() === 'a') {
             event.target.classList.add('is-navigated');
+        } else if (event.target !== null &&
+            event.target.tagName.toLowerCase() === 'li' &&
+            event.target.querySelector('a') !== undefined) {
+            event.target.querySelector('a').classList.add('is-navigated');
         }
         this._handleSingleSelect(event);
         this._handleMultiSelect(event);
+        this._handleRowSelect();
 
     }
 
@@ -623,6 +662,42 @@ export class ListComponent extends CollectionBaseInput implements OnInit, AfterV
         });
     }
 
+
+
+    private _handleRowSelect(): void {
+
+        // handles mutli select on row level without checkbox
+        if (this.selectionMode === 'multi' && this.selectRow) {
+            this.ListItems.forEach((item) => {
+                if (item._selected) {
+                    this._selectionModel.select(item);
+                    this.stateChanges.next(item);
+                } else {
+                    this._selectionModel.deselect(item);
+                    this.stateChanges.next(item);
+                }
+            });
+        }
+        // handles single select on row level without radiobutton
+
+        if (this.selectionMode === 'single' && this.selectRow) {
+            console.log('sinfle', this);
+            // this.ListItems.forEach((item) => {
+            //     //  item.listItem.nativeElement.classList.remove('is-selected');
+            //     item._selected = false;
+            // });
+            // this._selectionModel.clear();
+
+            // this.ListItems.forEach((item) => {
+            //     if (item._selected) {
+            //         this._selectionModel.select(item);
+            //         this.stateChanges.next(item);
+            //     }
+            // });
+        }
+    }
+
+
     /** @hidden */
     /**List item with checkbox styles,check,uncheckupdates
      * event:any to avoid code duplication
@@ -630,7 +705,7 @@ export class ListComponent extends CollectionBaseInput implements OnInit, AfterV
     private _handleMultiSelect(event: any): void {
         if (event.target !== null &&
             event.target !== undefined &&
-            this.selectionMode === 'multi') {
+            this.selectionMode === 'multi' && !this.selectRow) {
             if (event.target.tagName.toLowerCase() === 'li' &&
                 event.target.querySelector('fd-checkbox') !== undefined) {
                 const checkbox1 = event.target.querySelector('fd-checkbox');

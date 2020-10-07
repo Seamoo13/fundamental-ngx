@@ -1,9 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActionListItemComponent } from './action-list-item.component';
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { By } from '@angular/platform-browser';
+
 import { ListComponent } from '../list.component';
 import { PlatformListModule } from '../list.module';
+import { ActionListItemComponent } from './action-list-item.component';
 
 
 @Component({
@@ -80,16 +81,10 @@ describe('ActionListItemComponent', () => {
         expect(listItems.length).toEqual(4);
     });
 
-    it('Actionable items should has class list item actions', () => {
+    it('Should display action item  with role as list item', () => {
         const actionItems = fixture.debugElement.queryAll(By.css('li'));
         fixture.detectChanges();
-        expect(actionItems[0].nativeElement.classList).toContain('fd-list__item--action');
-    });
-
-    it('Should display action item  with role as list item', () => {
-        const listContainer = fixture.debugElement.query(By.css('fdp-action-list-item'));
-        fixture.detectChanges();
-        expect(listContainer.nativeElement.getAttribute('role')).toEqual('listitem');
+        expect(actionItems[0].nativeElement.getAttribute('role')).toContain('listitem');
     });
 
     it('Should Action 1 Action 2 Action 3 and as Action 4  as list item', () => {

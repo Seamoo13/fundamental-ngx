@@ -1,5 +1,9 @@
-import { Component, ChangeDetectorRef, ElementRef, ChangeDetectionStrategy, forwardRef } from '@angular/core';
+import {
+    Component, ChangeDetectorRef, ElementRef,
+    ChangeDetectionStrategy, forwardRef, Input
+} from '@angular/core';
 import { ENTER, SPACE } from '@angular/cdk/keycodes';
+
 import { ListConfig } from '../list.config';
 import { BaseListItem } from '../base-list-item';
 
@@ -7,13 +11,17 @@ import { BaseListItem } from '../base-list-item';
 @Component({
     selector: 'fdp-action-list-item',
     templateUrl: './action-list-item.component.html',
-    styleUrls: ['./action-list-item.component.scss'],
     providers: [
         { provide: BaseListItem, useExisting: forwardRef(() => ActionListItemComponent) }
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActionListItemComponent extends BaseListItem {
+
+    @Input()
+    title: string;
+
+    // method to invoke and pass parameter toapplhy to actioonlist item
 
 
     /** @hidden */
