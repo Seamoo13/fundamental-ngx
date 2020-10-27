@@ -1,5 +1,5 @@
 import { BaseComponentPo } from './base-component.po';
-import { $, $$, browser } from 'protractor';
+import { $, $$ } from 'protractor';
 
 
 export class LinkPo extends BaseComponentPo {

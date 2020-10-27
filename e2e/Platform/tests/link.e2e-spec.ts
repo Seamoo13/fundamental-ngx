@@ -8,7 +8,7 @@ import {
     linkFocusState
 } from '../fixtures/appData/link-page-contents';
 import { checkIfDisabled } from '../helper/assertion-helper';
-import { ElementFinder } from 'protractor';
+import { browser, ElementFinder } from 'protractor';
 
 describe('Link component test suite', () => {
     const linkPage = new LinkPo();
@@ -21,7 +21,7 @@ describe('Link component test suite', () => {
     }
 
     async function checkLinkHover(variable) {
-        return await expect(variable).toContain(linkFocusState)
+        return await expect(variable).toContain(linkFocusState);
     }
 
     beforeAll(async () => {

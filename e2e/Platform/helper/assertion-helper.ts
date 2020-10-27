@@ -70,20 +70,18 @@ export async function checkTriStateTwoStateCheckboxMarking (checkboxArray) {
     expect(Promise.all(fourthState)).not.toEqual(Promise.all(firstState));
     expect(Promise.all(fourthState)).toEqual(Promise.all(secondState));
 }
-// tslint:disable-next-line:typedef
-export async function checkHoverState(element) {
+export async function checkHoverState(element): Promise<any> {
     const checkboxHover = await hoverMouse(await element).then( () => {
         return element.getCssValue('border-color');
     });
-    return await expect(checkboxHover).toContain(checkboxHoverState);
+    expect(checkboxHover).toContain(checkboxHoverState);
 }
 
-// tslint:disable-next-line:typedef
-export async function checkFocusState(element) {
+export async function checkFocusState(element): Promise<any> {
     const checkboxHover = await clickCheckbox(await element).then( () => {
         return element.getCssValue('outline-style');
     });
-    return await expect(checkboxHover).toContain(checkboxFocusStyle);
+    expect(checkboxHover).toContain(checkboxFocusStyle);
 }
 
 // tslint:disable-next-line:typedef
