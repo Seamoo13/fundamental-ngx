@@ -76,3 +76,7 @@ export async function checkLinkTargetDestination(element, site: string, angular:
 export async function clickCheckbox(element: ElementFinder) {
     await browser.actions().mouseMove(await element).click().perform();
 }
+export async function clickTwice(element: ElementFinder): Promise<void> {
+    await element.click();
+    await element.click();
+}
