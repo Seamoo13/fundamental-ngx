@@ -8,21 +8,10 @@ import {
     linkFocusState
 } from '../fixtures/appData/link-page-contents';
 import { checkIfDisabled } from '../helper/assertion-helper';
-import { browser, ElementFinder } from 'protractor';
+import { ElementFinder } from 'protractor';
 
-describe('Link component test suite', () => {
+describe('Link component test suite', function() {
     const linkPage = new LinkPo();
-
-    async function checkLinkData(element: ElementFinder) {
-        expect(await getValueOfAttribute(element, 'type')).toEqual('text');
-        expect(await getValueOfAttribute(element, 'aria-label')).not.toEqual(null);
-        expect(await getValueOfAttribute(element, 'title')).not.toEqual(null);
-        expect(await getValueOfAttribute(element, 'href')).toBeDefined();
-    }
-
-    async function checkLinkHover(variable) {
-        return await expect(variable).toContain(linkFocusState);
-    }
 
     beforeAll(async () => {
         await linkPage.open();
@@ -34,7 +23,7 @@ describe('Link component test suite', () => {
              return linkPage.iconLink.getCssValue('text-decoration');
          });
 
-        await checkIfDisabled(linkPage.iconLink, 'ng-reflect-disabled', 'false');
+        await checkIfDisabled(await linkPage.iconLink, 'ng-reflect-disabled', 'false');
         await checkLinkData(await linkPage.iconLink);
         await checkLinkHover(iconLinkHoverState);
         expect(iconLinkAltText).toBe(defaultLink_alt_text);
@@ -50,7 +39,8 @@ describe('Link component test suite', () => {
         expect(await standardLinkHoverState).toContain('underline solid');
 
         linksArray.forEach(async (element, index) => {
-            if (index !== 8) {  // after fix: https://github.com/SAP/fundamental-ngx/issues/3633 need to remove if statement
+            // after fix: https://github.com/SAP/fundamental-ngx/issues/3633 need to remove if statement
+            if (index !== 8) {
                 await expect(await element.getAttribute('aria-label')).toBe(standardLinksAltTextArray[index]);
                 await checkIfDisabled(element, 'ng-reflect-disabled', 'false');
                 await checkLinkData(await element);
@@ -138,3 +128,14 @@ describe('Link component test suite', () => {
     });
 
 });
+
+async function checkLinkData(element: ElementFinder): Promise<void> {
+    expect(await getValueOfAttribute(element, 'type')).toEqual('text');
+    expect(await getValueOfAttribute(element, 'aria-label')).not.toEqual(null);
+    expect(await getValueOfAttribute(element, 'title')).not.toEqual(null);
+    expect(await getValueOfAttribute(element, 'href')).toBeDefined();
+}
+
+async function checkLinkHover(variable): Promise<void> {
+    expect(variable).toContain(linkFocusState)
+}
