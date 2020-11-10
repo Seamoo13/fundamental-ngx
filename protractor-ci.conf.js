@@ -5,8 +5,8 @@ const { SpecReporter } = require('jasmine-spec-reporter');
 
 exports.config = {
     allScriptsTimeout: 11000,
-    sauceUser: 'adler13', // 'bot-ui-framework',
-    sauceKey: 'a27f2b44-8f48-4128-a9c6-bd7d28394ad6', // '9d93fb24-322c-43db-b897-4ac680740968',
+    sauceUser: 'shon13', // 'bot-ui-framework',
+    sauceKey: '28a4ebcc-8cc5-4a08-817c-093c0b52130e', // '9d93fb24-322c-43db-b897-4ac680740968',
     sauceRegion: 'eu',
     specs: [
         './e2e/**/*.e2e-spec.ts'
