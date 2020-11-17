@@ -1,6 +1,6 @@
 import { clickByMouseMove, getValueOfAttribute, hoverMouse } from './helper';
 import { browser, ElementFinder } from 'protractor';
-import { checkboxErrorState, checkboxFocusStyle, checkboxHoverState } from '../fixtures/appData/checkbox-page-contents';
+import { checkboxErrorState, checkboxFocusStyle, checkboxHoverState } from '../platform/fixtures/appData/checkbox-page-contents';
 
 export async function checkIfDisabled(element: ElementFinder, attribute: string, value: string): Promise<void> {
     expect(await getValueOfAttribute(element, attribute)).toEqual(value);

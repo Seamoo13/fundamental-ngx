@@ -1,7 +1,7 @@
 import { InfoLabelPO } from '../pages/info-label.po';
 import InfoLabelData, { semanticColorsArr } from '../fixtures/appData/info-label-page-contents';
 import { browser } from 'protractor';
-import { getText, getValueOfAttribute, waitForVisible } from '../helper/helper';
+import { getText, getValueOfAttribute, waitForVisible } from '../../helper/helper';
 
 describe('Info Label component test suite', () => {
     const infoLabelPage = new InfoLabelPO();

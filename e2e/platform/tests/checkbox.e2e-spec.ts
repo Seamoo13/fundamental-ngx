@@ -1,5 +1,5 @@
 import { CheckboxPO } from '../pages/checkbox.po';
-import { clickByMouseMove, getValueOfAttribute } from '../helper/helper';
+import { clickByMouseMove, getValueOfAttribute } from '../../helper/helper';
 import {
     checkErrorHoverState,
     checkErrorTooltip,
@@ -9,7 +9,7 @@ import {
     checkMarkingCheckbox,
     checkTristateCheckboxMarking,
     checkTriStateTwoStateCheckboxMarking
-} from '../helper/assertion-helper';
+} from '../../helper/assertion-helper';
 import {
     a11yCheckboxAriaLabelledBy,
     a11yCheckboxAriaLabel,

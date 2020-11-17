@@ -1,5 +1,5 @@
 import { LinkPo } from '../pages/link.po';
-import { checkLinkTargetDestination, getValueOfAttribute, hoverMouse } from '../helper/helper';
+import { checkLinkTargetDestination, getValueOfAttribute, hoverMouse } from '../../helper/helper';
 import {
     defaultLink_alt_text,
     truncatedLink_alt_text,
@@ -7,7 +7,7 @@ import {
     googleLink,
     linkFocusState
 } from '../fixtures/appData/link-page-contents';
-import { checkIfDisabled } from '../helper/assertion-helper';
+import { checkIfDisabled } from '../../helper/assertion-helper';
 import { ElementFinder } from 'protractor';
 
 describe('Link component test suite', function() {

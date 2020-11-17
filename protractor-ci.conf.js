@@ -5,8 +5,8 @@ const { SpecReporter } = require('jasmine-spec-reporter');
 
 exports.config = {
     allScriptsTimeout: 11000,
-    sauceUser: 'shon13', // 'bot-ui-framework',
-    sauceKey: '28a4ebcc-8cc5-4a08-817c-093c0b52130e', // '9d93fb24-322c-43db-b897-4ac680740968',
+    sauceUser: 'shonmyr13', // 'bot-ui-framework',
+    sauceKey: 'd87b0a25-8b64-4b0d-832c-7345756ca44e', // '9d93fb24-322c-43db-b897-4ac680740968',
     sauceRegion: 'eu',
     specs: [
         './e2e/**/*.e2e-spec.ts'
@@ -14,52 +14,64 @@ exports.config = {
 
     multiCapabilities: [
         {
-            'browserName': 'internet explorer',
-            'version': 'latest',
-            'platform': 'Windows 10',
-            'name': 'e2e-win-internet-explorer',
+            browserName: 'internet explorer',
+            version: 'latest',
+            platform: 'Windows 10',
+            name: 'e2e-win-internet-explorer',
+            screenResolution: '1920x1080',
+            RequireWindowFocus: 'True'  // might fix mouseMove for IE11
         },
         {
-            'browserName': 'MicrosoftEdge',
-            'version': 'latest',
-            'platform': 'Windows 10',
-            'name': 'e2e-win-edge',
+            browserName: 'MicrosoftEdge',
+            version: 'latest',
+            platform: 'Windows 10',
+            name: 'e2e-win-edge',
+            screenResolution: '1920x1080',
         },
         {
-            'browserName': 'chrome',
-            'version': 'latest',
-            'platform': 'Windows 10',
-            'name': 'e2e-win-chrome',
+            browserName: 'chrome',
+            version: 'latest',
+            platform: 'Windows 10',
+            name: 'e2e-win-chrome',
+            screenResolution: '1920x1080',
         },
         {
-            'browserName': 'firefox',
-            'version': 'latest',
-            'platform': 'Windows 10',
-            'name': 'e2e-win-firefox',
+            browserName: 'firefox',
+            version: 'latest',
+            platform: 'Windows 10',
+            name: 'e2e-win-firefox',
+            screenResolution: '1920x1080',
+            'sauce:options': {
+                '-enablePassThrough': 'true'
+            }
+        },
+         {
+            browserName: 'chrome',
+            platform: 'MAC',
+            version: 'latest',
+            name: 'e2e-MAC-chrome',
+            screenResolution: '1920x1440',
         },
         {
-            'browserName': 'chrome',
-            'platform': 'MAC',
-            'version': 'latest',
-            'name': 'e2e-MAC-chrome',
+            browserName: 'firefox',
+            platform: 'MAC',
+            version: 'latest',
+            name: 'e2e-MAC-firefox',
+            screenResolution: '1920x1440',
         },
         {
-            'browserName': 'firefox',
-            'platform': 'MAC',
-            'version': 'latest',
-            'name': 'e2e-MAC-firefox',
+            browserName: 'MicrosoftEdge',
+            platform: 'MAC',
+            version: 'latest',
+            name: 'e2e-MAC-Edge',
+            screenResolution: '1920x1440',
         },
         {
-            'browserName': 'MicrosoftEdge',
-            'platform': 'MAC',
-            'version': 'latest',
-            'name': 'e2e-MAC-Edge',
-        },
-        {
-            'browserName': 'safari',
-            'platform': 'MAC',
-            'version': 'latest',
-            'name': 'e2e-MAC-safari',
+            browserName: 'safari',
+            platform: 'MAC',
+            version: 'latest',
+            name: 'e2e-MAC-safari',
+            screenResolution: '1920x1440',
         },
     ],
     baseUrl: 'http://sean.local:4200/fundamental-ngx#',
@@ -83,7 +95,7 @@ exports.config = {
 
         // Resize the screens if it is a VM
         if (!('platformName' in processedConfig.capabilities)) {
-            await browser.driver.manage().window().setSize(1366, 768);
+            await browser.driver.manage().window().maximize();//.setSize(1366, 768);
         }
 
         if (processedConfig.sauceUser && processedConfig.sauceKey) {
