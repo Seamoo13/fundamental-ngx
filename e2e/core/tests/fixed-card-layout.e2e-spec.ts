@@ -3,7 +3,7 @@ import { browser } from 'protractor';
 import fxdCardLytData from '../fixtures/appData/fixed-card-layout-content';
 import { waitForInvisible } from '../../helper/helper';
 
-describe('fixed card layout test suite', async () => {
+describe('fixed card layout test suite', function () {
     const fxdCardLayoutPg = new FixedCardLayoutPo();
     const driver = browser.driver;
 
@@ -55,10 +55,10 @@ describe('fixed card layout test suite', async () => {
         it('should drag a card from the header', async () => {
             const cardHeaderArr = await fxdCardLayoutPg.cardHeaderArr;
             const cardsArr = await fxdCardLayoutPg.cardDivArr;
-            const firstCardHeader = await cardHeaderArr[0];
-            const originalFirstCardText = await cardsArr[0].getText();
-            const firstCard = await cardsArr[0];
-            const fourthCard = await cardsArr[3];
+            const firstCardHeader = cardHeaderArr[0];
+            const originalFirstCardText = cardsArr[0].getText();
+            const firstCard = cardsArr[0];
+            const fourthCard = cardsArr[3];
 
             await checkDragAndDrop(firstCardHeader, firstCard, fourthCard, originalFirstCardText);
         });
@@ -103,11 +103,12 @@ describe('fixed card layout test suite', async () => {
         it('should check placeholder exists on drag', async () => {
             const cardHeaderArr = await fxdCardLayoutPg.cardHeaderArr;
             const firstCardHeader = cardHeaderArr[0];
-            // const secondCardHeader = cardHeaderArr[1];
+            const secondCardHeader = cardHeaderArr[1];
 
             await driver.actions().mouseDown(await firstCardHeader).perform().then(async () => {
-                browser.sleep(300);
-                await driver.actions().mouseMove(firstCardHeader).perform();
+                await driver.sleep(300);
+                await driver.actions().mouseMove(firstCardHeader)
+                    .mouseMove(secondCardHeader).perform();
             });
             await expect(fxdCardLayoutPg.placeholderCard.isDisplayed()).toBe(true);
             await expect(fxdCardLayoutPg.placeholderCard.getCssValue(fxdCardLytData.placeholderBorderAttr))
@@ -145,10 +146,11 @@ describe('fixed card layout test suite', async () => {
             const firstCardHeader = await cardHeaderArr[9];
             const firstCard = await cardsArr[9];
             const fourthCard = await cardsArr[12];
+            const disableBtn = await fxdCardLayoutPg.disableDragBtn;
 
-            await fxdCardLayoutPg.disableDragBtn.click();
+            await disableBtn.click();
             await driver.actions().mouseDown(firstCardHeader).perform().then(async () => {
-                await driver.sleep(300).then(async () => {
+                await driver.sleep(300);
                     await driver.actions().mouseMove(firstCard)
                         .mouseMove(fourthCard).perform().then(async () => {
                             await driver.actions().mouseUp().perform().then(async () => {
@@ -158,9 +160,7 @@ describe('fixed card layout test suite', async () => {
                                 await expect(newFirstCardText).toEqual(originalFirstCardText);
                             });
                         });
-                });
             });
-
         });
     });
 
@@ -185,10 +185,8 @@ describe('fixed card layout test suite', async () => {
     });
 
     async function checkDragAndDrop(clickElement, startElementLocation, endElementLocation, originalText): Promise<any> {
-
-        if (browser.name === 'Firefox')
-        await driver.actions().mouseDown(clickElement).perform().then(async () => {
-            await driver.sleep(300).then(async () => {
+            await driver.actions().mouseDown(clickElement).perform().then(async () => {
+                await driver.sleep(300);
                 await driver.actions().mouseMove(startElementLocation)
                     .mouseMove(endElementLocation).perform().then(async () => {
                         await driver.actions().mouseUp().perform().then(async () => {
@@ -199,6 +197,5 @@ describe('fixed card layout test suite', async () => {
                         });
                     });
             });
-        });
     }
 });

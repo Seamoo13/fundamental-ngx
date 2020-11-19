@@ -1,12 +1,13 @@
 // Protractor configuration file, see link for more information
 // https://github.com/angular/protractor/blob/master/lib/config.ts
+
 require('dotenv').config();
 const { SpecReporter } = require('jasmine-spec-reporter');
 
 exports.config = {
     allScriptsTimeout: 11000,
-    sauceUser: 'shonmyr13', // 'bot-ui-framework',
-    sauceKey: 'd87b0a25-8b64-4b0d-832c-7345756ca44e', // '9d93fb24-322c-43db-b897-4ac680740968',
+    sauceUser: process.env.SAUCE_USERNAME,
+    sauceKey: process.env.SAUCE_ACCESS_KEY,
     sauceRegion: 'eu',
     specs: [
         './e2e/**/*.e2e-spec.ts'
@@ -19,7 +20,7 @@ exports.config = {
             platform: 'Windows 10',
             name: 'e2e-win-internet-explorer',
             screenResolution: '1920x1080',
-            RequireWindowFocus: 'True'  // might fix mouseMove for IE11
+            RequireWindowFocus: 'True'  // fixes mouseMove, element focus etc.
         },
         {
             browserName: 'MicrosoftEdge',
@@ -41,40 +42,40 @@ exports.config = {
             platform: 'Windows 10',
             name: 'e2e-win-firefox',
             screenResolution: '1920x1080',
-            'sauce:options': {
-                '-enablePassThrough': 'true'
-            }
-        },
+            '-enablePassThrough': 'false' // [WIP] should fix mouse actions
+
+         },
          {
             browserName: 'chrome',
-            platform: 'MAC',
+            platform: 'macOS 10.15',
             version: 'latest',
             name: 'e2e-MAC-chrome',
             screenResolution: '1920x1440',
         },
         {
             browserName: 'firefox',
-            platform: 'MAC',
+            platform: 'macOS 10.15',
             version: 'latest',
             name: 'e2e-MAC-firefox',
             screenResolution: '1920x1440',
         },
         {
             browserName: 'MicrosoftEdge',
-            platform: 'MAC',
+            platform: 'macOS 10.15',
             version: 'latest',
             name: 'e2e-MAC-Edge',
             screenResolution: '1920x1440',
         },
         {
             browserName: 'safari',
-            platform: 'MAC',
+            platform: 'macOS 10.15',
             version: 'latest',
             name: 'e2e-MAC-safari',
             screenResolution: '1920x1440',
+           // forceFallback: true, [WIP] to fix mouse actions
         },
     ],
-    baseUrl: 'http://sean.local:4200/fundamental-ngx#',
+    baseUrl: 'https://sean.local:4200/fundamental-ngx#',
     //baseUrl: 'http://localhost:4200/#',
     // baseUrl: 'https://fundamental-ngx.netlify.app/#/',
     framework: 'jasmine',
@@ -90,6 +91,10 @@ exports.config = {
         require('ts-node').register({
             project: 'e2e/tsconfig.e2e.json'
         });
+
+        // fixes issue with loading URL on Safari
+        browser.resetUrl = 'about:blank';
+
         // Set some config data
         const processedConfig = await browser.getProcessedConfig();
 

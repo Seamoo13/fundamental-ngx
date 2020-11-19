@@ -28,7 +28,7 @@
     "deploy-docs": "angular-cli-ghpages -d dist/apps/docs --branch gh-pages",
     "sync-versions": "./ci-scripts/sync-version.sh",
     "e2e": "ng e2e --protractorConfig=protractor.conf.js",
-    "e2e:ci": "npm run start-sauce-tunnel & ng serve --disable-host-check & wait-on http://localhost:4200 && node_modules/.bin/protractor protractor-ci.conf.js && npm run kill-sauce-tunnel ",
+    "e2e:ci": "npm run start-sauce-tunnel & ng serve --disable-host-check --ssl --no-watch --prod true & wait-on https://localhost:4200 && node_modules/.bin/protractor protractor-ci.conf.js && npm run kill-sauce-tunnel",
     "start-sauce-tunnel": "node e2e/sauce-tunnel.js",
     "kill-sauce-tunnel": "sh e2e/sauce-tunnel-kill.sh",
     "hmr": "ng serve --hmr -e=hmr",
@@ -81,7 +81,8 @@
     "build-storybook": "build-storybook",
     "nx": "nx",
     "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points",
-    "docker-test": "docker run -u $(id -u) --rm -v \"$PWD\":/app trion/ng-cli-karma npm run test"
+    "docker-test": "docker run -u $(id -u) --rm -v \"$PWD\":/app trion/ng-cli-karma npm run test",
+    "webdriver-update": "webdriver-manager update"
   },
   "publishConfig": {
     "registry": "https://repository.hybris.com/api/npm/npm-repository/"
@@ -122,6 +123,7 @@
     "tslib": "2.0.2",
     "wait-on": "5.2.0",
     "web-animations-js": "2.3.2",
+    "webdriver-manager": "12.1.7",
     "zone.js": "0.11.2"
   },
   "devDependencies": {
