@@ -2,13 +2,14 @@
     <fd-popover
         [(isOpen)]="isOpen"
         [focusTrapped]="true"
+        [focusAutoCapture]="true"
         [triggers]="[]"
         [disabled]="disabled"
         [placement]="placement"
         [appendTo]="appendTo"
     >
         <fd-popover-control>
-            <fd-input-group [compact]="compact" [state]="state">
+            <fd-input-group [compact]="compact" [state]="state" [disabled]="disabled">
                 <input
                     type="text"
                     class="fd-input"
