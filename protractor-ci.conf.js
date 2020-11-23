@@ -42,7 +42,8 @@ exports.config = {
             platform: 'Windows 10',
             name: 'e2e-win-firefox',
             screenResolution: '1920x1080',
-            '-enablePassThrough': 'false' // [WIP] should fix mouse actions
+            directConnect: false,
+          //  FirefoxOptions: {'-enablePassThrough': false} // [WIP] should fix mouse actions
 
          },
          {
@@ -58,6 +59,7 @@ exports.config = {
             version: 'latest',
             name: 'e2e-MAC-firefox',
             screenResolution: '1920x1440',
+            directConnect: false,
         },
         {
             browserName: 'MicrosoftEdge',
