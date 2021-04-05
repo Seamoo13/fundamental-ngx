@@ -35,21 +35,21 @@ exports.config = {
         platformA: [
             './e2e/wdio/platform/**/action-bar.e2e-spec.ts',
             './e2e/wdio/platform/**/action-list-item.e2e-spec.ts',
-            './e2e/wdio/platform/**/approval-flow.e2e-spec.ts',
-            './e2e/wdio/platform/**/checkbox.e2e-spec.ts',
-            './e2e/wdio/platform/**/checkbox-group.e2e-spec.ts',
-            './e2e/wdio/platform/**/combobox.e2e-spec.ts',
-            './e2e/wdio/platform/**/date-picker.e2e-spec.ts',
-            './e2e/wdio/platform/**/date-time-picker.e2e-spec.ts',
-            './e2e/wdio/platform/**/display-list-item.e2e-spec.ts',
-            './e2e/wdio/platform/**/dynamic-page-layout.e2e-spec.ts',
-            './e2e/wdio/platform/**/feed-input.e2e-spec.ts',
-            './e2e/wdio/platform/**/file-uploader.e2e-spec.ts',
-            './e2e/wdio/platform/**/info-label.e2e-spec.ts',
-            './e2e/wdio/platform/**/input.e2e-spec.ts',
-            './e2e/wdio/platform/**/input-group.e2e-spec.ts',
-            './e2e/wdio/platform/**/link.e2e-spec.ts',
-            './e2e/wdio/platform/**/list.e2e-spec.ts',
+            // './e2e/wdio/platform/**/approval-flow.e2e-spec.ts',
+            // './e2e/wdio/platform/**/checkbox.e2e-spec.ts',
+            // './e2e/wdio/platform/**/checkbox-group.e2e-spec.ts',
+            // './e2e/wdio/platform/**/combobox.e2e-spec.ts',
+            // './e2e/wdio/platform/**/date-picker.e2e-spec.ts',
+            // './e2e/wdio/platform/**/date-time-picker.e2e-spec.ts',
+            // './e2e/wdio/platform/**/display-list-item.e2e-spec.ts',
+            // './e2e/wdio/platform/**/dynamic-page-layout.e2e-spec.ts',
+            // './e2e/wdio/platform/**/feed-input.e2e-spec.ts',
+            // './e2e/wdio/platform/**/file-uploader.e2e-spec.ts',
+            // './e2e/wdio/platform/**/info-label.e2e-spec.ts',
+            // './e2e/wdio/platform/**/input.e2e-spec.ts',
+            // './e2e/wdio/platform/**/input-group.e2e-spec.ts',
+            // './e2e/wdio/platform/**/link.e2e-spec.ts',
+            // './e2e/wdio/platform/**/list.e2e-spec.ts',
         ],
         platformB: [
             './e2e/wdio/platform/**/menu.e2e-spec.ts',
@@ -105,26 +105,26 @@ exports.config = {
         //         requireWindowFocus: true,
         //     }
         // },
-        {
-            browserName: 'MicrosoftEdge',
-            browserVersion: 'latest',
-            platformName: 'Windows 10',
-            acceptInsecureCerts: true,
-            'sauce:options': {
-                screenResolution: '1920x1080',
-                name: 'e2e-win-edge ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-            }
-        },
-        {
-            browserName: 'firefox',
-            browserVersion: 'latest',
-            platformName: 'Windows 10',
-            acceptInsecureCerts: true,
-            'sauce:options': {
-                name: 'e2e-win-firefox ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-                screenResolution: '1920x1080',
-            }
-        },
+        // {
+        //     browserName: 'MicrosoftEdge',
+        //     browserVersion: 'latest',
+        //     platformName: 'Windows 10',
+        //     acceptInsecureCerts: true,
+        //     'sauce:options': {
+        //         screenResolution: '1920x1080',
+        //         name: 'e2e-win-edge ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
+        //     }
+        // },
+        // {
+        //     browserName: 'firefox',
+        //     browserVersion: 'latest',
+        //     platformName: 'Windows 10',
+        //     acceptInsecureCerts: true,
+        //     'sauce:options': {
+        //         name: 'e2e-win-firefox ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
+        //         screenResolution: '1920x1080',
+        //     }
+        // },
         {
             browserName: 'chrome',
             browserVersion: 'latest',
@@ -135,36 +135,36 @@ exports.config = {
                 name: 'e2e-win-chrome ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
             }
         },
-        {
-            browserName: 'chrome',
-            platformName: 'macOS 10.15',
-            browserVersion: 'latest',
-            acceptInsecureCerts: true,
-            'sauce:options': {
-                name: 'e2e-MAC-chrome ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-                screenResolution: '1920x1440',
-            }
-        },
-        {
-            browserName: 'firefox',
-            platformName: 'macOS 10.15',
-            browserVersion: 'latest',
-            acceptInsecureCerts: true,
-            'sauce:options': {
-                screenResolution: '1920x1440',
-                name: 'e2e-MAC-firefox ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-            }
-        },
-        {
-            browserName: 'MicrosoftEdge',
-            platformName: 'macOS 10.15',
-            browserVersion: 'latest',
-            acceptInsecureCerts: true,
-            'sauce:options': {
-                screenResolution: '1920x1440',
-                name: 'e2e-MAC-Edge ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-            }
-        },
+        // {
+        //     browserName: 'chrome',
+        //     platformName: 'macOS 10.15',
+        //     browserVersion: 'latest',
+        //     acceptInsecureCerts: true,
+        //     'sauce:options': {
+        //         name: 'e2e-MAC-chrome ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
+        //         screenResolution: '1920x1440',
+        //     }
+        // },
+        // {
+        //     browserName: 'firefox',
+        //     platformName: 'macOS 10.15',
+        //     browserVersion: 'latest',
+        //     acceptInsecureCerts: true,
+        //     'sauce:options': {
+        //         screenResolution: '1920x1440',
+        //         name: 'e2e-MAC-firefox ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
+        //     }
+        // },
+        // {
+        //     browserName: 'MicrosoftEdge',
+        //     platformName: 'macOS 10.15',
+        //     browserVersion: 'latest',
+        //     acceptInsecureCerts: true,
+        //     'sauce:options': {
+        //         screenResolution: '1920x1440',
+        //         name: 'e2e-MAC-Edge ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
+        //     }
+        // },
         // {
         //     browserName: 'safari',
         //     browserVersion: '13.1',
@@ -206,7 +206,7 @@ exports.config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: 'https://sap.dev:4200/',
+    baseUrl: 'https://localhost:4200/',
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 30000,
@@ -227,7 +227,14 @@ exports.config = {
         ['sauce', {
             sauceConnect: true,
             connectRetries: 2,
-        }],
+            // sauceConnectOpts: {
+                // noSslBumpDomains: ['all'],
+                // noOcspVerify: true,
+            // },
+            // acceptSslCerts: true,
+            trustAllSSLCertificates: true,
+            // strictSSL: false,
+         }],
         ['image-comparison',
             // The options
             {
@@ -249,7 +256,7 @@ exports.config = {
     framework: 'jasmine',
     //
     // The number of times to retry the entire specfile when it fails as a whole
-    specFileRetries: 2,
+    specFileRetries: 0,
     //
     // Delay in seconds between the spec file retry attempts
     specFileRetriesDelay: 0,
