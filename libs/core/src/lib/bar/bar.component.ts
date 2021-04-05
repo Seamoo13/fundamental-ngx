@@ -4,10 +4,13 @@ import {
     ElementRef,
     Input,
     OnChanges,
+    OnDestroy,
     OnInit,
+    Optional,
     ViewEncapsulation
 } from '@angular/core';
-import { applyCssClass, CssClassBuilder } from '../utils/public_api';
+import { applyCssClass, ContentDensityService, CssClassBuilder } from '../utils/public_api';
+import { Subscription } from 'rxjs';
 
 export type SizeType = '' | 's' | 'm_l' | 'xl';
 export type BarDesignType = 'header' | 'subheader' | 'header-with-subheader' | 'footer' | 'floating-footer';
@@ -15,7 +18,7 @@ export type BarDesignType = 'header' | 'subheader' | 'header-with-subheader' | '
 /**
  * The Bar component is a container that holds titles, buttons and input controls.
  * Its content is distributed in three areas - left, middle and right.
- * The Bar has 2 modes - Desktop (default) and Tablet/Mobile (cosy).
+ * The Bar has 2 modes - Desktop (default) and Tablet/Mobile (cozy).
  */
 @Component({
     // tslint:disable-next-line:component-selector
@@ -25,7 +28,7 @@ export type BarDesignType = 'header' | 'subheader' | 'header-with-subheader' | '
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BarComponent implements OnChanges, OnInit, CssClassBuilder {
+export class BarComponent implements OnChanges, OnInit, CssClassBuilder, OnDestroy {
     /** user's custom classes */
     @Input()
     class: string;
@@ -50,16 +53,30 @@ export class BarComponent implements OnChanges, OnInit, CssClassBuilder {
     @Input()
     size: SizeType = '';
 
-    /** Whether to apply cosy mode to the Bar. */
+    /** Whether to apply cozy mode to the Bar. */
     @Input()
-    cosy: boolean;
+    cozy?: boolean;
 
     /** @hidden */
-    constructor(private _elementRef: ElementRef) {}
+    private _subscriptions = new Subscription();
+
+    /** @hidden */
+    constructor(private _elementRef: ElementRef, @Optional() private _contentDensityService: ContentDensityService) {}
 
     /** @hidden */
     ngOnInit(): void {
+        if (this.cozy === undefined && this._contentDensityService) {
+            this._subscriptions.add(this._contentDensityService._contentDensityListener.subscribe(density => {
+                this.cozy = density === 'cozy';
+                this.buildComponentCssClass();
+            }));
+        }
         this.buildComponentCssClass();
+    }
+
+    /** @hidden */
+    ngOnDestroy(): void {
+        this._subscriptions.unsubscribe();
     }
 
     /** @hidden */
@@ -75,7 +92,7 @@ export class BarComponent implements OnChanges, OnInit, CssClassBuilder {
     buildComponentCssClass(): string[] {
         return [
             'fd-bar',
-            this.cosy ? 'fd-bar--cozy' : '',
+            this.cozy ? 'fd-bar--cozy' : '',
             this.barDesign ? `fd-bar--${this.barDesign}` : '',
             this.inPage && !this.size ? 'fd-bar--page' : '',
             this.inPage && this.size ? `fd-bar--page-${this.size}` : '',

@@ -4,6 +4,7 @@
     [class.is-disabled]="disabled"
     [class.fd-shellbar__input-group]="inShellbar"
     [class.fd-input-group--control]="isControl"
+    [class.is-focus]="isFocused"
     [ngClass]="state ? 'is-' + state : ' '"
 >
     <ng-container *ngIf="placement !== 'before' && !inputElement">
@@ -24,16 +25,20 @@
             <button
                 fd-button
                 class="fd-input-group__button"
+                type="button"
+                fdType="transparent"
                 [compact]="compact"
                 [attr.tabindex]="buttonFocusable ? 0 : -1"
-                fdType="transparent"
+                [attr.title]="iconTitle"
                 [glyph]="glyph"
                 [class.fd-shellbar__button]="inShellbar"
                 [class.is-expanded]="isExpanded"
-                (click)="buttonClicked($event)"
-                type="button"
                 [attr.aria-expanded]="isExpanded"
+                [attr.aria-label]="glyphAriaLabel"
                 [attr.aria-controls]="input"
+                [disabled]="disabled"
+                (mousedown)="preventFocus($event)"
+                (click)="buttonClicked($event)"
             >
                 <ng-container *ngIf="!glyph">{{ addOnText }}</ng-container>
             </button>
@@ -60,6 +65,7 @@
         fd-input-group-input
         [compact]="compact"
         [type]="type"
+        [disabled]="disabled"
         *ngIf="!inputElement && !inputTemplate"
         [attr.placeholder]="placeholder"
     />

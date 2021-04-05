@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { RouterTestingModule } from '@angular/router/testing';
 import { By } from '@angular/platform-browser';
@@ -57,7 +57,7 @@ describe('ListComponent', () => {
     let component: ListComponentTest;
     let fixture: ComponentFixture<ListComponentTest>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [PlatformListModule, StandardListItemModule, RouterTestingModule],
             declarations: [ListComponentTest, StandardListItemComponent, ListComponent]
@@ -76,7 +76,7 @@ describe('ListComponent', () => {
     });
 
     it('Should display list container with role as list', () => {
-        const listContainer = fixture.debugElement.nativeElement.querySelector('fdp-list');
+        const listContainer = fixture.debugElement.nativeElement.querySelector('ul');
         fixture.detectChanges();
         expect(listContainer.getAttribute('role')).toEqual('list');
     });
@@ -131,7 +131,7 @@ describe('ListComponent with DataSource', () => {
     let host: ListDataSourceTestComponent;
     let fixture: ComponentFixture<ListDataSourceTestComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [ListDataSourceTestComponent, StandardListItemComponent, ListComponent],
             imports: [PlatformListModule, StandardListItemModule, RouterTestingModule]

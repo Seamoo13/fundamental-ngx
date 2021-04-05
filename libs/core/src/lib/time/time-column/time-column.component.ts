@@ -15,22 +15,24 @@ import {
     ViewChildren,
     ViewEncapsulation
 } from '@angular/core';
-import { CarouselConfig, CarouselDirective, PanEndOutput } from '../../utils/directives/carousel/carousel.directive';
-import { CarouselItemDirective } from '../../utils/directives/carousel/carousel-item.directive';
-import { KeyUtil } from '../../utils/functions/key-util';
-import { TimeColumnConfig } from './time-column-config';
 import { Subject, Subscription } from 'rxjs';
 import { buffer, debounceTime, map } from 'rxjs/operators';
+import { DOWN_ARROW, SPACE, UP_ARROW } from '@angular/cdk/keycodes';
 
+import { CarouselDirective } from '../../utils/directives/carousel/carousel.directive';
+import { CarouselItemDirective } from '../../utils/directives/carousel/carousel-item.directive';
+import { KeyUtil } from '../../utils/functions';
+import { CarouselConfig, PanEndOutput } from '../../utils/services/carousel.service';
+import { TimeColumnConfig } from './time-column-config';
+
+import { SelectableViewItem } from '../models';
 
 let timeColumnUniqueId = 0;
 
-
-export interface TimeColumnItemOutput {
-    value: any;
+export interface TimeColumnItemOutput<T> {
+    value: T;
     after?: boolean;
 }
-
 
 @Component({
     selector: 'fd-time-column',
@@ -39,23 +41,15 @@ export interface TimeColumnItemOutput {
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None
 })
-export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
-
+export class TimeColumnComponent<K, T extends SelectableViewItem<K> = SelectableViewItem<K>>
+    implements AfterViewInit, OnInit, OnDestroy {
     /** items in row */
     @Input()
-    rows: any[];
+    rows: T[] = [];
 
     /** items in row */
     @Input()
     compact = false;
-
-    /**
-     * @Input when set to true, time inputs won't allow to have 1 digit
-     * for example 9 will become 09
-     * but 12 will be kept as 12.
-     */
-    @Input()
-    keepTwoDigits = false;
 
     /**
      * @Input When set to false, hides the buttons that increment and decrement the corresponding columns.
@@ -65,14 +59,14 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
 
     /** Currently chosen, centered time column item */
     @Input()
-    set activeValue(value: any) {
-        if (this._initialised && this._activeValue !== value) {
-            this._pickTime(this._getItem(value), true);
+    set activeValue(activeItem: T) {
+        if (this._initialized && this._activeValue !== activeItem) {
+            this._pickTime(this._getItem(activeItem), false);
         }
-        this._activeValue = value;
+        this._activeValue = activeItem;
     }
 
-    get activeValue(): any {
+    get activeValue(): T {
         return this._activeValue;
     }
 
@@ -80,7 +74,7 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
     @Input()
     set active(value: boolean) {
         this._active = value;
-        if (value && this._initialised) {
+        if (value && this._initialized) {
             this._changeDetRef.detectChanges();
             this._pickTime(this._getItem(this.activeValue), false);
             this._focusIndicator();
@@ -115,7 +109,7 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
 
     /** Event emitted, when active item is changed, by carousel */
     @Output()
-    activeValueChange: EventEmitter<TimeColumnItemOutput> = new EventEmitter<TimeColumnItemOutput>();
+    activeValueChange: EventEmitter<TimeColumnItemOutput<T>> = new EventEmitter<TimeColumnItemOutput<T>>();
 
     /** Event emitted, when certain column is activated */
     @Output()
@@ -140,13 +134,14 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
     typeaheadDebounceInterval = 750;
 
     config: CarouselConfig;
+
     currentIndicatorId: string = this.id + '-current-indicator';
 
     /** @hidden */
     private _queryKeyDownEvent: Subject<string> = new Subject<string>();
 
     /** @hidden */
-    private _activeValue: any;
+    private _activeValue: T;
 
     /** @hidden */
     private _activeCarouselItem: CarouselItemDirective;
@@ -155,14 +150,12 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
     private _isDragging = false;
 
     /** @hidden */
-    private _initialised = false;
+    private _initialized = false;
 
     /** @hidden */
     private _subscriptions: Subscription = new Subscription();
 
-    constructor(
-        private _changeDetRef: ChangeDetectorRef
-    ) { }
+    constructor(private _changeDetRef: ChangeDetectorRef) {}
 
     /** @hidden */
     ngOnInit(): void {
@@ -172,7 +165,7 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
 
     /** @hidden */
     ngAfterViewInit(): void {
-        this._initialised = true;
+        this._initialized = true;
     }
 
     /** @hidden */
@@ -189,10 +182,10 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
     /** @hidden */
     @HostListener('keydown', ['$event'])
     keyDownHandler(event: KeyboardEvent): void {
-        if (KeyUtil.isKey(event, 'ArrowDown')) {
+        if (KeyUtil.isKeyCode(event, DOWN_ARROW)) {
             this.scrollDown();
             event.preventDefault();
-        } else if (KeyUtil.isKey(event, 'ArrowUp')) {
+        } else if (KeyUtil.isKeyCode(event, UP_ARROW)) {
             this.scrollUp();
             event.preventDefault();
         } else if (KeyUtil.isKeyType(event, 'numeric') || KeyUtil.isKeyType(event, 'alphabetical')) {
@@ -202,11 +195,11 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
 
     /** @hidden */
     spinnerButtonKeydownHandle(event: KeyboardEvent, upButton?: boolean): void {
-        if (KeyUtil.isKey(event, ' ')) {
+        if (KeyUtil.isKeyCode(event, SPACE)) {
             if (upButton) {
                 this.scrollUp();
             } else {
-                this.scrollDown()
+                this.scrollDown();
             }
 
             event.stopPropagation();
@@ -215,17 +208,16 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     /** @hidden */
-    public setValueOfActive(): void {
+    setValueOfActive(): void {
         if (this._active) {
             this._setUpInitialValue();
         }
     }
 
-
     /** It prevents from accidentally change the item by click event */
     handleDrag(isDragging: boolean): void {
         if (!isDragging) {
-            setTimeout(() => this._isDragging = false, 30);
+            setTimeout(() => (this._isDragging = false), 30);
         } else {
             this._isDragging = isDragging;
         }
@@ -234,7 +226,7 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
     /** Method that handles active item change */
     activeChangedHandle(output: PanEndOutput): void {
         const array = this.items.toArray();
-        let index: number = array.findIndex(__item => __item === output.item) + this.offset;
+        let index: number = array.findIndex((__item) => __item === output.item) + this.offset;
 
         if (index > array.length) {
             index = index - array.length;
@@ -243,16 +235,18 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
         const _item = array[index];
 
         this._activeValue = _item.value;
+
         this.activeValueChange.emit({
             value: this._activeValue,
             after: output.after
         });
+
         this._activeCarouselItem = _item;
     }
 
     /** Method that changes active item and triggers carousel scroll */
     pick(item: CarouselItemDirective, index: number): void {
-        const currentIndex: number = this.items.toArray().findIndex(_item => _item === this._activeCarouselItem);
+        const currentIndex: number = this.items.toArray().findIndex((_item) => _item === this._activeCarouselItem);
         /** To prevent from switching time, when it's being dragged */
         if (!this._isDragging) {
             this._pickTime(item, true, true, currentIndex < index);
@@ -265,11 +259,7 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
         if (event && !event.clientX) {
             return;
         }
-        let index: number = this.items
-            .toArray()
-            .findIndex(_item => _item === this._activeCarouselItem)
-        ;
-
+        let index: number = this.items.toArray().findIndex((_item) => _item === this._activeCarouselItem);
         if (index > 0) {
             index--;
         } else {
@@ -281,11 +271,7 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
 
     /** Method triggered by keyboard, or decrement button */
     scrollDown(): void {
-        let index: number = this.items
-            .toArray()
-            .findIndex(_item => _item === this._activeCarouselItem)
-        ;
-
+        let index: number = this.items.toArray().findIndex((_item) => _item === this._activeCarouselItem);
         if (index < this.rows.length - 1) {
             index++;
         } else {
@@ -293,6 +279,15 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
         }
 
         this._pickTime(this.items.toArray()[index], true, true, true);
+    }
+
+    /**
+     * Create id for column item
+     * @param index column item index
+     * @returns column item id
+     */
+    _createColumnItemIdByIndex(index: number): string {
+        return this.id + index;
     }
 
     /**
@@ -307,9 +302,14 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
         if (!item) {
             return;
         }
-        this._triggerCarousel(item, smooth);
+
+        if (this.active) {
+            this._triggerCarousel(item, smooth);
+        }
+
         this._activeCarouselItem = item;
         this._activeValue = item.value;
+
         if (emitEvent) {
             this.activeValueChange.emit({
                 value: item.value,
@@ -319,14 +319,14 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     /** Returns item with passed value */
-    private _getItem(value: any): CarouselItemDirective {
-        return this.items.find(item => item.value === value);
+    private _getItem(_item: T): CarouselItemDirective {
+        return this.items.find((item) => item.value === _item);
     }
 
     /** @hidden */
     private _triggerCarousel(item: CarouselItemDirective, smooth?: boolean): void {
         const array = this.items.toArray();
-        let index: number = array.findIndex(_item => _item === item) - this.offset;
+        let index: number = array.findIndex((_item) => _item === item) - this.offset;
 
         if (index < 0) {
             index = array.length + index;
@@ -356,19 +356,27 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
         const trigger = this._queryKeyDownEvent.pipe(debounceTime(this.typeaheadDebounceInterval));
 
         this._subscriptions.add(
-            this._queryKeyDownEvent.pipe(
-                buffer(trigger),
-                map(keys => keys.join('')),
-                map(value => this._getValue(value)),
-                map(value => this._getItem(value))
-            ).subscribe(item => this._pickTime(item, false, true))
+            this._queryKeyDownEvent
+                .pipe(
+                    buffer(trigger),
+                    map((keys) => keys.join('')),
+                    map((value) => this._getValue(value)),
+                    map((value) => this._getItem(value))
+                )
+                .subscribe((item) => this._pickTime(item, false, true))
         );
     }
 
     /** @hidden */
     private _setUpCarouselConfiguration(): void {
         if (!this.meridian) {
-            this.config = { gestureSupport: true, vertical: true, elementsAtOnce: 7, transition: '150ms', infinite: true };
+            this.config = {
+                gestureSupport: true,
+                vertical: true,
+                elementsAtOnce: 7,
+                transition: '150ms',
+                infinite: true
+            };
         } else {
             this.config = { gestureSupport: true, vertical: true, elementsAtOnce: 7, transition: '150ms' };
         }
@@ -379,7 +387,6 @@ export class TimeColumnComponent implements AfterViewInit, OnInit, OnDestroy {
         if (!this._activeValue) {
             this._activeValue = this.items.first.value;
         }
-        this._pickTime(this._getItem(this._activeValue), true);
+        this._pickTime(this._getItem(this._activeValue), false);
     }
-
 }

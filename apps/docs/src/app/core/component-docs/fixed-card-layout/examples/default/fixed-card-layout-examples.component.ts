@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 
 @Component({
     selector: 'fd-fixed-card-layout-examples',
@@ -6,17 +6,19 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FixedCardLayoutExampleComponent {
-    card1Visibility = true;
-    card2Visibility = true;
-    card3Visibility = true;
+    cardsHidden = [];
 
-    public showHideCard(card: string): void {
-        if (card === 'card1') {
-            this.card1Visibility = !this.card1Visibility;
-        } else if (card === 'card2') {
-            this.card2Visibility = !this.card2Visibility;
-        } else if (card === 'card3') {
-            this.card3Visibility = !this.card3Visibility;
-        }
+    constructor(private _changeDetectorRef: ChangeDetectorRef) {}
+
+    isHidden(card: string): boolean {
+        return this.cardsHidden.some(_card => _card === card);
+    }
+
+    update(): void {
+        this._changeDetectorRef.detectChanges();
+    }
+
+    cardDraggedDropped(dropEvent: any): void {
+        console.log('Items after drag abd drop: ', dropEvent.items);
     }
 }

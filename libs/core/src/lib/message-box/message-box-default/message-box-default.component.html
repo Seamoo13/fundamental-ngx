@@ -1,0 +1,27 @@
+<fd-message-box>
+    <fd-message-box-header>
+        <h1 fd-title>{{ _messageBoxContent.title }}</h1>
+    </fd-message-box-header>
+    <fd-message-box-body>
+        <ng-container *ngTemplateOutlet="_contentTemplate"></ng-container>
+    </fd-message-box-body>
+    <fd-message-box-footer *ngIf="_footerVisible">
+        <fd-button-bar *ngIf="_messageBoxContent.approveButton"
+                fd-initial-focus
+                fdType="emphasized"
+                [label]="_messageBoxContent.approveButton"
+                [compact]="!_messageBoxConfig.mobile"
+                (click)="_onApproveButton()">
+        </fd-button-bar>
+        <fd-button-bar
+                *ngIf="_messageBoxContent.cancelButton"
+                [label]="_messageBoxContent.cancelButton"
+                [compact]="!_messageBoxConfig.mobile"
+                (click)="_onCancelButton()">
+        </fd-button-bar>
+    </fd-message-box-footer>
+</fd-message-box>
+
+<ng-template #textContent>
+    {{ _messageBoxContent.content }}
+</ng-template>

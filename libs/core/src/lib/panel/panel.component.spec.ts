@@ -1,7 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { PanelModule } from './panel.module';
+import { RtlService } from '../utils/services/rtl.service';
 
 @Component({
     template: `
@@ -27,10 +28,11 @@ describe('PanelComponent', () => {
     let panelContent: ElementRef;
     let button: ElementRef;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [TestComponent],
-            imports: [PanelModule]
+            imports: [PanelModule],
+            providers: [RtlService]
         }).compileComponents();
     }));
 

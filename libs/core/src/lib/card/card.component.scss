@@ -1,5 +1,6 @@
 @import '~fundamental-styles/dist/numeric-content';
 @import '~fundamental-styles/dist/card';
+@import '~fundamental-styles/dist/badge';
 
 /* Defined locally as fundamental-styles does not provide it */
 
@@ -19,18 +20,6 @@
 }
 
 .fd-card {
-    /* Should be removed once https://github.com/SAP/fundamental-styles/issues/1715 is resolved */
-    .fd-card__avatar {
-        margin-right: 0.75rem;
-
-        @at-root {
-            [dir='rtl'] & {
-                margin-right: 0;
-                margin-left: 0.75rem;
-            }
-        }
-    }
-
     /* Should be removed once https://github.com/SAP/fundamental-styles/issues/1729 is resolved */
     .fd-card__analytics-content,
     .fd-numeric-content__kpi {
@@ -41,4 +30,17 @@
             }
         }
     }
+}
+
+.fd-card__numeric-content.fd-numeric-content {
+    width: auto;
+    flex-shrink: 0;
+}
+
+.fd-numeric-content__scale-container {
+    flex: auto;
+}
+
+.fd-numeric-content__kpi {
+    font-size: 2.25rem !important;
 }

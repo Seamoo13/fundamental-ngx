@@ -1,11 +1,11 @@
 import { Component, Inject } from '@angular/core';
-import { DIALOG_REF, DialogRef } from '@fundamental-ngx/core';
+import { DialogRef } from '@fundamental-ngx/core';
 
 @Component({
     template: `
         <fd-dialog>
             <fd-dialog-header>
-                <h1 fd-dialog-title>{{ dialogRef.data.title }}</h1>
+                <h1 fd-title>{{ dialogRef.data.title }}</h1>
                 <button fd-dialog-close-button (click)="dialogRef.dismiss('Close button')"></button>
             </fd-dialog-header>
 
@@ -18,32 +18,21 @@ import { DIALOG_REF, DialogRef } from '@fundamental-ngx/core';
             </fd-dialog-body>
 
             <fd-dialog-footer>
-                <fd-dialog-footer-button>
-                    <button
-                        fd-button
-                        fdType="emphasized"
-                        fd-dialog-decisive-button
+                <fd-button-bar 
                         label="Interesting"
-                        [compact]="true"
+                        fdType="emphasized"
                         (click)="this.dialogRef.close('Continue')">
-                    </button>
-                </fd-dialog-footer-button>
-
-                <fd-dialog-footer-button>
-                    <button
-                        fd-button
-                        fdType="transparent"
-                        fd-dialog-decisive-button
-                        fd-initial-focus
+                </fd-button-bar>
+                <fd-button-bar 
                         label="Cancel"
-                        [compact]="true"
+                        fdInitialFocus
+                        fdType="transparent"
                         (click)="this.dialogRef.dismiss('Cancel')">
-                    </button>
-                </fd-dialog-footer-button>
+                </fd-button-bar>
             </fd-dialog-footer>
         </fd-dialog>
     `
 })
 export class DialogExampleComponent {
-    constructor(@Inject(DIALOG_REF) public dialogRef: DialogRef) {}
+    constructor(public dialogRef: DialogRef) {}
 }

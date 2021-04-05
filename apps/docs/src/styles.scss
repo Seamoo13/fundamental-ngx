@@ -1,5 +1,4 @@
 // @import url("../../../node_modules/fundamental-styles/dist/fundamental-styles.css");
-@import "~@angular/cdk/overlay-prebuilt.css";
 @import "~fundamental-styles/dist/info-label.css";
 
 $gutter-size: 15px;
@@ -165,14 +164,6 @@ pre {
     border: 1px solid #ccc;
     transition: 0.25s background-color;
     display: block;
-
-    ul {
-        margin-left: 0;
-
-        a:hover {
-            text-decoration: none;
-        }
-    }
 }
 
 .fd-centered-content {
@@ -286,4 +277,24 @@ body {
 
 .fd-info-label + .fd-info-label {
     margin-left: 0.3rem;
+}
+
+.fd-docs--toolbar {
+	.fd-shellbar__product {
+		margin: 0 0.5rem;
+	}
+
+	.fd-shellbar--s {
+		.fd-shellbar__product {
+			margin: 0;
+		}
+	}
+
+	.fd-shellbar__action--mobile {
+		display: none !important;
+	}
+
+	.fd-shellbar__action--desktop {
+		display: flex !important;
+	}
 }

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ComboboxComponent } from './combobox.component';
 import { CommonModule } from '@angular/common';
 import { PopoverModule } from '../popover/popover.module';
@@ -7,16 +7,18 @@ import { ListModule } from '../list/list.module';
 import { PipeModule } from '../utils/pipes/pipe.module';
 import { InputGroupModule } from '../input-group/input-group.module';
 import { DynamicComponentService } from '../utils/dynamic-component/dynamic-component.service';
+import { ButtonModule } from '../button/button.module';
+import { ContentDensityService, DEFAULT_CONTENT_DENSITY } from '../utils/public_api';
 
 describe('ComboboxComponent', () => {
     let component: ComboboxComponent;
     let fixture: ComponentFixture<ComboboxComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [ComboboxComponent],
-            imports: [InputGroupModule, CommonModule, PopoverModule, FormsModule, ListModule, PipeModule],
-            providers: [DynamicComponentService]
+            imports: [InputGroupModule, CommonModule, PopoverModule, FormsModule, ListModule, PipeModule, ButtonModule],
+            providers: [DynamicComponentService, ContentDensityService]
         }).compileComponents();
     }));
 
@@ -30,18 +32,6 @@ describe('ComboboxComponent', () => {
         component.searchFn = () => {
         };
         fixture.detectChanges();
-
-        /** That's focus trap testing workaround */
-        component.focusTrap = {
-            activate: () => {
-            },
-            deactivate: () => {
-            },
-            pause: () => {
-            },
-            unpause: () => {
-            }
-        };
     });
 
     it('should create', () => {
@@ -70,6 +60,11 @@ describe('ComboboxComponent', () => {
         component.inputText = 'someValue';
         expect(component.onChange).toHaveBeenCalledWith('someValue');
         expect(component.onTouched).toHaveBeenCalled();
+    });
+
+    it('should handle content density when compact input is not provided', () => {
+        component.ngOnInit();
+        expect(component.compact).toBe(DEFAULT_CONTENT_DENSITY !== 'cozy');
     });
 
     it('should write value not on dropdown mode', () => {
@@ -133,12 +128,10 @@ describe('ComboboxComponent', () => {
         component.dropdownValues = ['value 1', 'value 2'];
         component.inputText = 'input text';
         spyOn(component, 'filterFn');
-        spyOn(component.popoverComponent, 'updatePopover');
 
         component.handleSearchTermChange();
 
         expect(component.filterFn).toHaveBeenCalledWith(component.dropdownValues, component.inputText);
-        expect(component.popoverComponent.updatePopover).toHaveBeenCalled();
     });
 
     it('should handle primaryButtonClick', () => {
@@ -148,18 +141,6 @@ describe('ComboboxComponent', () => {
         component.onPrimaryButtonClick();
         expect(component.searchFn).toHaveBeenCalled();
         expect(component.isOpenChangeHandle).toHaveBeenCalledWith(true);
-    });
-
-    it('should handle isOpenChangeHandle', () => {
-        component.open = false;
-        spyOn(component.openChange, 'emit');
-        spyOn(component, 'onTouched');
-        component.displayedValues = ['value1', 'value2'];
-        spyOn(component.focusTrap, 'activate');
-        component.isOpenChangeHandle(true);
-        expect(component.openChange.emit).toHaveBeenCalledWith(true);
-        expect(component.onTouched).toHaveBeenCalled();
-        expect(component.focusTrap.activate).toHaveBeenCalled();
     });
 
     it('should choose previous element', () => {
@@ -247,5 +228,24 @@ describe('ComboboxComponent', () => {
 
         expect(component.onChange).toHaveBeenCalled();
         expect(component.inputText).toEqual('test');
+    });
+
+    it('should change the addon to search when combobox is used as search field', () => {
+        component.isSearch = true;
+        expect(component.glyphValue).toBe('search');
+    });
+
+    it('should render two buttons when combobox is used as search field and there is input text', () => {
+        let addOns = fixture.nativeElement.querySelectorAll('button');
+        expect(addOns.length).toBe(1);
+        component.isSearch = true;
+        component.communicateByObject = true;
+        component.displayFn = (item: any): string => {
+            return item.displayedValue;
+        };
+        component.inputText = 'displayedValue2';
+        (<any>component)._cdRef.detectChanges();
+        addOns = fixture.nativeElement.querySelectorAll('button');
+        expect(addOns.length).toBe(2);
     });
 });

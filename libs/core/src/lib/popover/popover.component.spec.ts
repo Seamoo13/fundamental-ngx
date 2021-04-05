@@ -1,15 +1,18 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { PopoverComponent } from './popover.component';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ConnectedPosition, OverlayModule } from '@angular/cdk/overlay';
+import { A11yModule } from '@angular/cdk/a11y';
 import { PopoverModule } from './popover.module';
+import { DefaultPositions, PopoverPosition } from './popover-position/popover-position';
+import { PopoverComponent } from './popover.component';
+
 
 describe('PopoverComponent', () => {
     let component: PopoverComponent;
     let fixture: ComponentFixture<PopoverComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            imports: [PopoverModule]
+            imports: [PopoverModule, OverlayModule, A11yModule]
         }).compileComponents();
     }));
 
@@ -19,41 +22,7 @@ describe('PopoverComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should open', () => {
-        spyOn(component.isOpenChange, 'emit');
-        component.isOpen = false;
-        component.open();
-        expect(component.isOpen).toBe(true);
-        expect(component.isOpenChange.emit).toHaveBeenCalledWith(true);
-    });
-
-    it('should close', () => {
-        spyOn(component.isOpenChange, 'emit');
-        component.isOpen = true;
-        component.close();
-        expect(component.isOpen).toBe(false);
-        expect(component.isOpenChange.emit).toHaveBeenCalledWith(false);
-    });
-
-    it('should toggle', () => {
-        component.isOpen = true;
-        component.toggle();
-        expect(component.isOpen).toBe(false);
-
-        component.toggle();
-        expect(component.isOpen).toBe(true);
-    });
-
-    it('should support Alt + ArrowDown event', () => {
-        spyOn(component.isOpenChange, 'emit');
-
-        const event: any = {
-            key: 'ArrowDown',
-            altKey: true
-        };
-
-        component.handleKeydown(event);
-        expect(component.isOpen).toBe(true);
-        expect(component.isOpenChange.emit).toHaveBeenCalledWith(true);
+    it('should create', () => {
+        expect(component).toBeDefined();
     });
 });

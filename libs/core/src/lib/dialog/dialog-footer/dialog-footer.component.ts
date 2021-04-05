@@ -1,39 +1,40 @@
-import { AfterContentInit, Component, ContentChildren, Inject, Optional, QueryList, TemplateRef } from '@angular/core';
-import { TemplateDirective } from '../../utils/directives/template/template.directive';
-import { DIALOG_CONFIG, DialogConfig } from '../dialog-utils/dialog-config.class';
+import { AfterContentInit, AfterViewInit, Component, Optional } from '@angular/core';
+import { DialogConfig } from '../utils/dialog-config.class';
+import { DialogFooterBase } from '../base/dialog-footer-base.class';
+
+export const DialogButtonClass = 'fd-dialog__decisive-button';
 
 /**
- * Applies fundamental layout and styling to the contents of a dialog footer.
+ * Building block of the dialog used to create dialog button.
  *
  * ```html
+ * <fd-dialog-footer><!--Content--></fd-dialog-footer>
+ *
+ * Complex footer:
  * <fd-dialog-footer>
- *     <button fd-dialog-decisive-button>Do action</button>
+ *     <ng-template fdTemplate="footer"><!--Content--></ng-template>
  * </fd-dialog-footer>
  * ```
- */
+ * */
 @Component({
     selector: 'fd-dialog-footer',
     templateUrl: './dialog-footer.component.html'
 })
-export class DialogFooterComponent implements AfterContentInit {
-    /** @hidden */
-    footerTemplate: TemplateRef<any>;
+export class DialogFooterComponent extends DialogFooterBase implements AfterContentInit, AfterViewInit {
 
     /** @hidden */
-    @ContentChildren(TemplateDirective) customTemplates: QueryList<TemplateDirective>;
-
-    constructor(@Optional() @Inject(DIALOG_CONFIG) public dialogConfig: DialogConfig) {
+    constructor(@Optional() public dialogConfig: DialogConfig) {
+        super();
         this.dialogConfig = this.dialogConfig || {};
     }
 
     /** @hidden */
     ngAfterContentInit(): void {
-        this._assignCustomTemplates();
+        super.ngAfterContentInit();
     }
 
-    /** @hidden Assign custom templates */
-    private _assignCustomTemplates(): void {
-        const footerTemplate = this.customTemplates.find((template) => template.getName() === 'footer');
-        this.footerTemplate = footerTemplate ? footerTemplate.templateRef : undefined;
+    /** @hidden */
+    ngAfterViewInit(): void {
+        this._listenForButtonChanges(DialogButtonClass);
     }
 }

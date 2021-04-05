@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { PopoverComponent } from '@fundamental-ngx/core';
 
 @Component({
-    selector: 'fdp-platform-input-auto-complete-form-validation-example',
+    selector: 'fdp-platform-input-auto-complete-validation-example',
     templateUrl: './platform-input-auto-complete-validation-example.component.html',
     styleUrls: ['./platform-input-auto-complete-validation-example.component.scss']
 })
@@ -48,7 +48,7 @@ export class PlatformInputAutoCompleteValidationExampleComponent implements OnIn
     onSearchChange(): void {
         this.options = this.filter(this.inputText);
         this.open = (this.options.length > 0);
-        this.typeahead.updatePopover();
+        this.typeahead.refreshPosition();
     }
 
     onItemClick(clickedValue): void {

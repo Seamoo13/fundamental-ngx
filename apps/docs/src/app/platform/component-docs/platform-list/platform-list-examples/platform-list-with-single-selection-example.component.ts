@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { ListDataSource, DataProvider } from '@fundamental-ngx/platform';
+
+import { ListDataSource, DataProvider, SelectionChangeEvent } from '@fundamental-ngx/platform';
 
 
 const LIST_ELEMENTS: Address[] = [
@@ -27,16 +28,24 @@ export class ListDataProvider extends DataProvider<Address> {
     }
 }
 @Component({
-    selector: 'fdp-list-with-single-selection-example',
+    selector: 'fdp-platform-list-with-single-selection-example',
     templateUrl: './platform-list-with-single-selection-example.component.html'
 })
-export class PlatformListWithSingleSelectionExampleComponent {
+export class PlatformListWithSingleSelectionExampleComponent implements AfterViewInit {
     _dataSource = new ListDataSource<Address>(new ListDataProvider());
-    _selectedItems: any[] = [];
+    _selectedItem: string;
 
-    _showItemInfo(event: any): void {
+    constructor(private _render: Renderer2, private _elementRef: ElementRef) {}
+
+    ngAfterViewInit(): void {
+        const toolbar = this._elementRef.nativeElement.querySelector('fd-toolbar');
+        this._render.setAttribute(toolbar, 'tabindex', '0' );
+        this._render.setStyle(toolbar, 'outline', 'none' );
+    }
+
+    _showItemInfo(event: SelectionChangeEvent): void {
         if (event.selectedItems[0] !== undefined) {
-            this._selectedItems = event.selectedItems[0].id;
+            this._selectedItem = event.selectedItems[0].id;
         }
     }
 

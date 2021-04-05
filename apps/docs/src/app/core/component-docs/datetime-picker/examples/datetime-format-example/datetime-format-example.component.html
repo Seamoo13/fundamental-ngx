@@ -1,3 +1,8 @@
-<fd-datetime-picker [placeholder]="'yyyy-mm-dd HHhMMmSSs'" [(ngModel)]="this.date"></fd-datetime-picker> <br />
+<fd-datetime-picker
+    placeholder="MMM DD, YYYY, h:mm a"
+    [(ngModel)]="date"
+></fd-datetime-picker>
 <br />
-Selected: {{ date ? date.toLocaleDateString() : 'null' }}
+<br />
+<br />
+Selected: {{ date || 'null' }}

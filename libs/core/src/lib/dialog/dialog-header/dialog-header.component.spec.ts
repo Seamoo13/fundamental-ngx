@@ -1,8 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DialogHeaderComponent } from './dialog-header.component';
 import { Component, Type, ViewChild } from '@angular/core';
-import { DIALOG_CONFIG, DialogConfig } from '../dialog-utils/dialog-config.class';
+import { DialogConfig } from '../utils/dialog-config.class';
 import { TemplateModule } from '../../utils/directives/template/template.module';
 import { BarModule } from '../../bar/bar.module';
 
@@ -33,7 +33,7 @@ class CustomHeaderTestComponent {
 @Component({
     template: `
         <fd-dialog-header>
-            <h1 fd-dialog-title>Default Title</h1>
+            <h1 fd-title>Default Title</h1>
             <button fd-dialog-close-button></button>
         </fd-dialog-header>
     `
@@ -43,11 +43,11 @@ class DefaultHeaderTestComponent {
 }
 
 describe('DialogHeaderComponent', () => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [DialogHeaderComponent, CustomHeaderTestComponent, DefaultHeaderTestComponent],
             imports: [BarModule, TemplateModule],
-            providers: [{ provide: DIALOG_CONFIG, useClass: DialogConfig }]
+            providers: [DialogConfig]
         });
     }));
 

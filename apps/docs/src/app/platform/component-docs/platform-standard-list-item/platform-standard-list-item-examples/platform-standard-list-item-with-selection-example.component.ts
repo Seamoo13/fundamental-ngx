@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Renderer2, ElementRef, AfterViewInit } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { ListDataSource, DataProvider } from '@fundamental-ngx/platform';
 
@@ -47,20 +47,28 @@ export class ListDataProvider extends DataProvider<Address> {
     }
     fetch(params: Map<string, string>): Observable<Address[]> {
         let data = LIST_ELEMENTS;
-        if (!!params.get(name)) {
-            const keyword = params.get(name).toLowerCase();
+        if (!!params.get('name')) {
+            const keyword = params.get('name').toLowerCase();
             data = data.filter((city) => city.name.toLowerCase().indexOf(keyword) > -1);
         }
         return of(data);
     }
 }
 @Component({
-    selector: 'fdp-standard-list-item-with-selection-example',
+    selector: 'fdp-platform-standard-list-item-with-selection-example',
     templateUrl: './platform-standard-list-item-with-selection-example.component.html'
 })
-export class PlatformStandardListItemWithSelectionExampleComponent {
+export class PlatformStandardListItemWithSelectionExampleComponent implements AfterViewInit {
     _dataSource = new ListDataSource<Address>(new ListDataProvider());
     _selectedItems: any[] = [];
+
+    constructor(private _render: Renderer2, private _elementRef: ElementRef) {}
+
+    ngAfterViewInit(): void {
+        const toolbar = this._elementRef.nativeElement.querySelector('fd-toolbar');
+        this._render.setAttribute(toolbar, 'tabindex', '0' );
+        this._render.setStyle(toolbar, 'outline', 'none' );
+    }
 
     _showItemInfo(event: any): void {
         this._selectedItems = event.selectedItems;

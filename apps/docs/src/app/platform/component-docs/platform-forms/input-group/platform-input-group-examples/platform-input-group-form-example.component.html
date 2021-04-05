@@ -1,22 +1,25 @@
 <main class="fd-page">
     <div class="fd-page__content">
-        <fdp-form-group #fg [multiLayout]="true">
+        <fdp-form-group #fg>
             <fdp-form-field
                 #ff
                 id="qty"
                 label="Quantity"
                 placeholder="Things quantity"
                 hint="This is tooltip to help"
-                zone="zLeft"
                 rank="1"
                 [required]="true"
             >
-                <fdp-input-group name="qty" [formControl]="ff.formControl">
+                <fdp-input-group
+                    name="qty"
+                    [formControl]="ff.formControl"
+                    ariaLabelledBy="input-group-form-label input-group-form-left-addon-aria-label-dollar input-group-form-right-addon-aria-label"
+                >
                     <fdp-input-group-addon>$</fdp-input-group-addon>
                     <fdp-input-group-input type="number"></fdp-input-group-input>
                     <fdp-input-group-addon>0.00</fdp-input-group-addon>
                     <fdp-input-group-addon>
-                        <fdp-button>Submit</fdp-button>
+                        <fdp-button label="Submit"></fdp-button>
                     </fdp-input-group-addon>
                 </fdp-input-group>
             </fdp-form-field>
@@ -29,3 +32,7 @@
     <pre>Form result: {{ fg.formGroup.value | json }}</pre>
     <pre>Form Status: {{ fg.formGroup.status }}</pre>
 </main>
+
+<span aria-hidden="true" style="display: none" id="input-group-form-label">Quantity</span>
+<span aria-hidden="true" style="display: none" id="input-group-form-left-addon-aria-label-dollar">Currency: $</span>
+<span aria-hidden="true" style="display: none" id="input-group-form-right-addon-aria-label">Format: 0.00</span>

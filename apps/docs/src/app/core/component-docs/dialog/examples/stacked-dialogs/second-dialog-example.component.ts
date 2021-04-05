@@ -1,11 +1,11 @@
 import { Component, Inject } from '@angular/core';
-import { DIALOG_REF, DialogRef } from '@fundamental-ngx/core';
+import { DialogRef } from '@fundamental-ngx/core';
 
 @Component({
     template: `
         <fd-dialog>
             <fd-dialog-header>
-                <h1 fd-dialog-title>Second Dialog</h1>
+                <h1 fd-title>Second Dialog</h1>
                 <button fd-dialog-close-button (click)="dialogRef.dismiss()"></button>
             </fd-dialog-header>
 
@@ -15,21 +15,16 @@ import { DIALOG_REF, DialogRef } from '@fundamental-ngx/core';
             </fd-dialog-body>
 
             <fd-dialog-footer>
-                <fd-dialog-footer-button>
-                    <button
-                        fd-button
-                        fdType="emphasized"
+                <fd-button-bar
                         fd-initial-focus
-                        fd-dialog-decisive-button
+                        fdType="emphasized"
                         label="Close"
-                        [compact]="true"
                         (click)="dialogRef.close()">
-                    </button>
-                </fd-dialog-footer-button>
+                </fd-button-bar>
             </fd-dialog-footer>
         </fd-dialog>
     `
 })
 export class SecondDialogExampleComponent {
-    constructor(@Inject(DIALOG_REF) public dialogRef: DialogRef) {}
+    constructor(public dialogRef: DialogRef) {}
 }

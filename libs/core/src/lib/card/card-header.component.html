@@ -1,16 +1,4 @@
-<ng-container *ngIf="_avatar">
-    <fd-avatar
-        class="fd-card__avatar"
-        size="s"
-        [id]="_avatar.id"
-        [circle]="true"
-        [image]="_avatar.image"
-        [label]="_avatar.abbreviate"
-        [ariaLabel]="_avatar.ariaLabel"
-        [ariaLabelledby]="_avatar.ariaLabelledby"
-        role="presentation"
-    ></fd-avatar>
-</ng-container>
+<ng-content select="fd-avatar"></ng-content>
 
 <div class="fd-card__header-text">
     <!-- Title -->
@@ -20,7 +8,10 @@
     </div>
 
     <!-- Subtitle -->
-    <div class="fd-card__subtitle-area">
+    <div
+        class="fd-card__subtitle-area"
+        *ngIf="_subtitle"
+    >
         <ng-content select="[fd-card-subtitle]"></ng-content>
     </div>
 

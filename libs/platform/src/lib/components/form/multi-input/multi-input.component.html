@@ -1,0 +1,117 @@
+<div class="fd-multi-input fd-multi-input-custom">
+    <div class="fd-multi-input-field">
+        <ng-container *ngTemplateOutlet="mobile ? mobileTemplate : desktopTemplate"></ng-container>
+    </div>
+</div>
+<ng-template #desktopTemplate>
+    <div class="fdp-multi-input" cdkOverlayOrigin #selectTrigger="cdkOverlayOrigin">
+        <ng-container [ngTemplateOutlet]="controlTemplate"></ng-container>
+    </div>
+
+    <!-- Option panel using Material CDK overlay system -->
+    <ng-template
+        cdk-connected-overlay
+        [cdkConnectedOverlayOrigin]="selectTrigger"
+        [cdkConnectedOverlayOpen]="isOpen && _suggestions.length > 0"
+        (overlayOutsideClick)="close()"
+        [cdkConnectedOverlayMinWidth]="minWidth"
+    >
+        <div class="fdp-multi-input__list-container fd-popover__popper fd-popover__body--no-arrow">
+            <ng-container [ngTemplateOutlet]="listTemplate"></ng-container>
+        </div>
+    </ng-template>
+</ng-template>
+
+<ng-template #mobileTemplate>
+    <ng-container [ngTemplateOutlet]="controlTemplate"></ng-container>
+</ng-template>
+
+<ng-template #controlTemplate>
+    <fd-input-group
+        class="fd-multi-input-input-group-custom"
+        [button]="!readonly"
+        [glyph]="'value-help'"
+        [state]="status"
+        [disabled]="disabled"
+        [compact]="contentDensity === 'compact'"
+        (keydown)="removeSelectedTokens($event)"
+        (addOnButtonClicked)="!mobile && onPrimaryButtonClick(_connectedOverlay.open)"
+        (click)="mobile && onPrimaryButtonClick(false)"
+    >
+        <fd-tokenizer
+            *ngIf="selected"
+            [compact]="contentDensity === 'compact'"
+            [tokenizerFocusable]="false"
+            class="fd-multi-input-tokenizer-custom"
+            [class]="contentDensity === 'compact' ? 'fd-multi-input-tokenizer-custom--compact' : ''"
+            (moreClickedEvent)="moreClicked()"
+        >
+            <fd-token [readOnly]="disabled" (onCloseClick)="removeToken(token)" *ngFor="let token of selected">{{
+                token.label
+            }}</fd-token>
+            <input
+                #searchInputElement
+                type="text"
+                class="fd-input fd-tokenizer__input fd-multi-input-tokenizer-input"
+                fdp-auto-complete
+                [inputText]="inputText"
+                [options]="_suggestions"
+                fd-input-group-input
+                fd-form-control
+                [disabled]="disabled"
+                [(ngModel)]="inputText"
+                (ngModelChange)="searchTermChanged()"
+                [placeholder]="placeholder"
+                (focus)="onTouched()"
+                [attr.aria-expanded]="isOpen && _suggestions.length > 0"
+                [readonly]="readonly"
+                [attr.aria-readonly]="readonly"
+            />
+        </fd-tokenizer>
+    </fd-input-group>
+</ng-template>
+<ng-template #listTemplate>
+    <fdp-list
+        [noBorder]="true"
+        #listTemplateDD
+        [hasByLine]="hasByLine"
+        [selectionMode]="selectionMode"
+        [contentDensity]="contentDensity"
+        *ngIf="_suggestions && _suggestions.length"
+    >
+        <ng-container *ngIf="!isGroup">
+            <fdp-standard-list-item
+                *ngFor="let listItem of _suggestions"
+                [title]="listItem.label"
+                [description]="listItem.description"
+                [avatarSrc]="listItem.avatarSrc"
+                (itemSelected)="addToArray(listItem)"
+                [contentDensity]="contentDensity"
+                (buttonClicked)="deleteToken(listItem)"
+            >
+            </fdp-standard-list-item>
+        </ng-container>
+        <ng-container *ngIf="isGroup">
+            <ng-container *ngFor="let group of _suggestions">
+                <ng-container *ngIf="!groupItemTemplate">
+                    <fdp-list-group-header [grpheaderTitle]="group.label"></fdp-list-group-header>
+                </ng-container>
+
+                <ng-container *ngIf="groupItemTemplate">
+                    <ng-container
+                        [ngTemplateOutlet]="groupItemTemplate"
+                        [ngTemplateOutletContext]="{ $implicit: { label: group.label } }"
+                    ></ng-container>
+                </ng-container>
+
+                <fdp-standard-list-item
+                    *ngFor="let optionItem of group.children; let i = index"
+                    [title]="optionItem.label"
+                    (itemSelected)="addToArray(optionItem)"
+                    (buttonClicked)="deleteToken($event)"
+                >
+                </fdp-standard-list-item>
+            </ng-container>
+        </ng-container>
+    </fdp-list>
+</ng-template>

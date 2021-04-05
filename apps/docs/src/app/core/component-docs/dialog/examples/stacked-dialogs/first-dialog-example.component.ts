@@ -1,12 +1,12 @@
 import { Component, Inject } from '@angular/core';
-import { DIALOG_REF, DialogConfig, DialogRef, DialogService } from '@fundamental-ngx/core';
+import { DialogConfig, DialogRef, DialogService } from '@fundamental-ngx/core';
 import { SecondDialogExampleComponent } from './second-dialog-example.component';
 
 @Component({
     template: `
         <fd-dialog>
             <fd-dialog-header>
-                <h1 fd-dialog-title>First Dialog</h1>
+                <h1 fd-title>First Dialog</h1>
                 <button fd-dialog-close-button (click)="dialogRef.dismiss('x')"></button>
             </fd-dialog-header>
 
@@ -16,23 +16,18 @@ import { SecondDialogExampleComponent } from './second-dialog-example.component'
             </fd-dialog-body>
 
             <fd-dialog-footer>
-                <fd-dialog-footer-button>
-                    <button
-                        fd-button
-                        fdType="emphasized"
+                <fd-button-bar
                         fd-initial-focus
-                        fd-dialog-decisive-button
+                        fdType="emphasized"
                         label="Open Second Dialog"
-                        [compact]="true"
                         (click)="openDialog()">
-                    </button>
-                </fd-dialog-footer-button>
+                </fd-button-bar>
             </fd-dialog-footer>
         </fd-dialog>
     `
 })
 export class FirstDialogExampleComponent {
-    constructor(@Inject(DIALOG_REF) public dialogRef: DialogRef, public _dialogService: DialogService) {}
+    constructor(public dialogRef: DialogRef, public _dialogService: DialogService) {}
 
     openDialog(): void {
         this._dialogService.open(SecondDialogExampleComponent, { responsivePadding: true });

@@ -11,6 +11,7 @@ import {
     OnChanges,
     OnDestroy,
     OnInit,
+    Optional,
     Output,
     SimpleChanges,
     TemplateRef,
@@ -19,16 +20,24 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { PopoverComponent } from '../popover/popover.component';
-import { PopoverFillMode } from '../popover/popover-directive/popover.directive';
 import { MenuKeyboardService } from '../menu/menu-keyboard.service';
 import { FormStates } from '../form/form-control/form-states';
-import { applyCssClass, CssClassBuilder, DynamicComponentService, FocusEscapeDirection, KeyUtil } from '../utils/public_api';
+import {
+    applyCssClass,
+    ContentDensityService,
+    CssClassBuilder,
+    DynamicComponentService,
+    FocusEscapeDirection
+} from '../utils/public_api';
+import { KeyUtil } from '../utils/functions';
+import { PopoverFillMode } from '../popover/popover-position/popover-position';
 import { MultiInputMobileComponent } from './multi-input-mobile/multi-input-mobile.component';
 import { MobileModeConfig } from '../utils/interfaces/mobile-mode-config';
 import { MULTI_INPUT_COMPONENT, MultiInputInterface } from './multi-input.interface';
 import { Subscription } from 'rxjs';
 import { TokenizerComponent } from '../token/tokenizer.component';
 import { ListComponent } from '../list/list.component';
+import { DOWN_ARROW, TAB, SPACE, ENTER } from '@angular/cdk/keycodes';
 
 /**
  * Input field with multiple selection enabled. Should be used when a user can select between a
@@ -73,7 +82,7 @@ export class MultiInputComponent implements
 
     /** Whether the input is in compact mode. */
     @Input()
-    compact = false;
+    compact?: boolean;
 
     /** Whether to use cozy visuals but compact collapsing behavior. */
     @Input()
@@ -93,7 +102,11 @@ export class MultiInputComponent implements
 
     /** Search term, or more specifically the value of the inner input field. */
     @Input()
-    searchTerm: string;
+    searchTerm = '';
+
+    /** Id attribute for input element inside MultiInput component */
+    @Input()
+    inputId = '';
 
     /** Whether the search term should be highlighted in results. */
     @Input()
@@ -111,30 +124,37 @@ export class MultiInputComponent implements
      * An arrow function can be used to access the *this* keyword in the calling component.
      * See multi input examples for details. */
     @Input()
-    filterFn: Function = this.defaultFilter;
+    filterFn: Function = this._defaultFilter;
 
     /** Display function. Accepts an object of the same type as the
      * items passed to dropdownValues as argument, and outputs a string.
      * An arrow function can be used to access the *this* keyword in the calling component.
      * See multi input examples for details. */
     @Input()
-    displayFn: Function = this.defaultDisplay;
+    displayFn: Function = this._defaultDisplay;
 
     /** Parse function. Used for submitting new tokens. Accepts a string by default.
      * An arrow function can be used to access the *this* keyword in the calling component.
      * See multi input examples for details. */
     @Input()
-    newTokenParseFn: Function = this.defaultParse;
+    newTokenParseFn: Function = this._defaultParse;
+
+    /**
+     * Validate function. Used to check if new token can be added into list.
+     * Works only, when `allowNewTokens` option is enabled.
+     */
+    @Input()
+    newTokenValidateFn: Function = this._defaultTokenValidate;
 
     /** Aria label for the multi input body. */
     @Input()
     multiInputBodyLabel = 'Multi input body';
 
     /**
-     * Preset options for the popover body width.
-     * * `at-least` will apply a minimum width to the body equivalent to the width of the control.
+     * Preset options for the Select body width, whatever is chosen, the body has a 600px limit.
+     * * `at-least` will apply a minimum width to the body equivalent to the width of the control. - Default
      * * `equal` will apply a width to the body equivalent to the width of the control.
-     * * Leave blank for no effect.
+     * * 'fit-content' will apply width needed to properly display items inside, independent of control.
      */
     @Input()
     fillControlMode: PopoverFillMode = 'at-least';
@@ -162,9 +182,33 @@ export class MultiInputComponent implements
     @Input()
     showAllButton = true;
 
+    /** Max width of multi input body in PX */
+    @Input()
+    bodyMaxWidth: number = null;
+
     /** Multi Input Mobile Configuration, it's applied only, when mobile is enabled */
     @Input()
     mobileConfig: MobileModeConfig = { hasCloseButton: true, approveButtonText: 'Select' };
+
+    /**
+     * Whether or not to return results where the input matches the entire string. By default, only results that start
+     * with the input search term will be returned.
+     */
+    @Input()
+    includes = false;
+
+    /**
+     * The template with which to display the individual listed items.
+     * Use it by passing an ng-template with implicit content. See examples for more info.
+     */
+    @Input()
+    itemTemplate: TemplateRef<any>;
+
+    /**
+     * The tooltip for the multi-input icon.
+     */
+    @Input()
+    title: string;
 
     /** Event emitted when the search term changes. Use *$event* to access the new term. */
     @Output()
@@ -208,7 +252,7 @@ export class MultiInputComponent implements
 
     /** @hidden */
     @ViewChild(TokenizerComponent)
-    tokenizer;
+    tokenizer: TokenizerComponent;
 
     /** @hidden */
     displayedValues: any[] = [];
@@ -228,11 +272,19 @@ export class MultiInputComponent implements
     constructor(
         private _elementRef: ElementRef,
         private _changeDetRef: ChangeDetectorRef,
-        private _dynamicComponentService: DynamicComponentService
+        private _dynamicComponentService: DynamicComponentService,
+        @Optional() private _contentDensityService: ContentDensityService
     ) { }
 
     /** @hidden */
     ngOnInit(): void {
+        if (this.compact === undefined && this._contentDensityService) {
+            this._subscriptions.add(this._contentDensityService._contentDensityListener.subscribe(density => {
+                this.compact = density !== 'cozy';
+                this.buildComponentCssClass();
+                this._changeDetRef.markForCheck();
+            }))
+        }
         this.buildComponentCssClass();
         if (this.dropdownValues) {
             this.displayedValues = this.dropdownValues;
@@ -321,13 +373,21 @@ export class MultiInputComponent implements
         if (this.disabled) {
             return ;
         }
+
+        if (!open && this.open && !this.mobile) {
+            this.searchInputElement.nativeElement.focus();
+        }
+
         if (this.open !== open) {
             this.openChange.emit(open);
         }
-
         this.open = open;
+
         if (!this.mobile) {
             this._popoverOpenHandle(open);
+        }
+        if (!this.open) {
+            this._resetSearchTerm();
         }
         this._changeDetRef.detectChanges();
     }
@@ -355,31 +415,20 @@ export class MultiInputComponent implements
 
         // Handle popover placement update
         if (this._shouldPopoverBeUpdated(previousLength, this.selected.length)) {
-            this.popoverRef.updatePopover();
+            this.popoverRef.refreshPosition();
         }
+
+        this._resetSearchTerm();
+
+        this.searchInputElement.nativeElement.focus();
 
         // On Mobile mode changes are propagated only on approve.
         this._propagateChange();
     }
 
     /** @hidden */
-    removeSelectedTokens(event: KeyboardEvent): void {
-        let allSelected = true;
-        if (KeyUtil.isKey(event, ['Delete', 'Backspace']) && !this.searchTerm) {
-            this.tokenizer.tokenList.forEach(token => {
-                if (token.selected || token.tokenWrapperElement.nativeElement === document.activeElement) {
-                    this.handleSelect(false, token.elementRef.nativeElement.innerText);
-                } else {
-                    allSelected = false;
-                }
-            });
-            this.tokenizer.input.elementRef().nativeElement.focus();
-        }
-    }
-
-    /** @hidden */
-    handleInputKeydown(event: KeyboardEvent): void {
-        if (KeyUtil.isKey(event, 'ArrowDown') && !this.mobile) {
+    _handleInputKeydown(event: KeyboardEvent): void {
+        if (KeyUtil.isKeyCode(event, DOWN_ARROW) && !this.mobile) {
             if (event.altKey) {
                 this.openChangeHandle(true);
             }
@@ -389,7 +438,7 @@ export class MultiInputComponent implements
             }
         }
 
-        if (KeyUtil.isKey(event, 'Tab') && this.open) {
+        if (KeyUtil.isKeyCode(event, TAB) && this.open) {
             if (this.listComponent) {
                 this.listComponent.setItemActive(0);
                 event.preventDefault();
@@ -398,31 +447,37 @@ export class MultiInputComponent implements
     }
 
     /** @hidden */
-    handleSearchTermChange(): void {
-        if (!this.open) {
-            this.openChangeHandle(true);
+    _handleSearchTermChange(searchTerm: string): void {
+        if (this.searchTerm !== searchTerm) {
+            this._applySearchTermChange(searchTerm);
+            if (!this.open) {
+                this.openChangeHandle(true);
+            }
         }
-        this.searchTermChange.emit(this.searchTerm);
-        this.displayedValues = this.filterFn(this.dropdownValues, this.searchTerm);
-        this._changeDetRef.detectChanges();
     }
 
     /** @hidden */
-    showAllClicked(event: MouseEvent): void {
+    _showAllClicked(event: Event): void {
         event.preventDefault();
         event.stopPropagation();
-        this.searchTerm = '';
-        this.handleSearchTermChange();
+        this._applySearchTermChange('');
+        this.searchInputElement.nativeElement.focus();
     }
 
     /** @hidden */
-    onSubmit(): void {
-        if (this.allowNewTokens) {
+    _showAllKeyDown(event: KeyboardEvent): void {
+        if (KeyUtil.isKeyCode(event, [SPACE, ENTER])) {
+            this._showAllClicked(event);
+        }
+    }
+
+    /** @hidden */
+    _onSubmit(): void {
+        if (this.allowNewTokens && this.newTokenValidateFn(this.searchTerm)) {
             const newToken = this.newTokenParseFn(this.searchTerm);
             this.dropdownValues.push(newToken);
             this.handleSelect(true, newToken);
-            this.searchTerm = '';
-            this.handleSearchTermChange();
+            this._applySearchTermChange('');
             this.open = false;
         }
     }
@@ -446,7 +501,7 @@ export class MultiInputComponent implements
     }
 
     /** @hidden */
-    moreClicked(): void {
+    _moreClicked(): void {
         this.openChangeHandle(true);
         const newDisplayedValues: any[] = [];
         this.displayedValues.forEach(value => {
@@ -459,29 +514,44 @@ export class MultiInputComponent implements
     }
 
     /** @hidden */
-    addOnButtonClicked(): void {
-        if (!this.open) {
-            this.handleSearchTermChange();
-        } else {
-            this.openChangeHandle(false);
-        }
+    _addOnButtonClicked(): void {
+        this.openChangeHandle(!this.open);
     }
 
-    private defaultFilter(contentArray: any[], searchTerm: string = ''): any[] {
+    /** @hidden */
+    private _applySearchTermChange(searchTerm: string): void {
+        this.searchTerm = searchTerm;
+        this.searchTermChange.emit(this.searchTerm);
+        this.displayedValues = this.filterFn(this.dropdownValues, this.searchTerm);
+        this._changeDetRef.detectChanges();
+    }
+
+    /** @hidden */
+    private _defaultFilter(contentArray: any[], searchTerm: string = ''): any[] {
         const searchLower = searchTerm.toLocaleLowerCase();
         return contentArray.filter((item) => {
             if (item) {
-                return this.displayFn(item).toLocaleLowerCase().includes(searchLower);
+                const term = this.displayFn(item).toLocaleLowerCase();
+                let retVal;
+                this.includes ? retVal = term.includes(searchLower) : retVal = term.startsWith(searchLower);
+                return retVal;
             }
         });
     }
 
-    private defaultDisplay(str: string): string {
+    /** @hidden */
+    private _defaultDisplay(str: string): string {
         return str;
     }
 
-    private defaultParse(str: string): string {
+    /** @hidden */
+    private _defaultParse(str: string): string {
         return str;
+    }
+
+    /** @hidden */
+    private _defaultTokenValidate(str: string): boolean {
+        return !!str;
     }
 
     /**
@@ -519,6 +589,7 @@ export class MultiInputComponent implements
     /** @hidden */
     private _resetSearchTerm(): void {
         this.searchTerm = '';
+        this._applySearchTermChange(this.searchTerm);
         this._changeDetRef.detectChanges();
     }
 

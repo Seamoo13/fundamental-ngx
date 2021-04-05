@@ -1,0 +1,26 @@
+<fdp-form-group #ffg [formGroup]="datetimePickerForm">
+    <fdp-form-field
+        #ffl1
+        id="simple"
+        rank="1"
+        required="true"
+        [validators]="requiredDateValidator"
+        label="Date:"
+    >
+        <fdp-datetime-picker
+            name="simple"
+            [formControl]="ffl1.formControl"
+            [disableFunction]="disableFunction"
+            placeholder="MM/dd/YYYY, hh:mm"
+        >
+        </fdp-datetime-picker>
+    </fdp-form-field>
+
+    <fdp-form-field id="disabledDatetime" rank="2" label="Disabled Datetime Picker:">
+        <fdp-datetime-picker name="disabledDatetime" [disabled]="true" [value]="date"> </fdp-datetime-picker>
+    </fdp-form-field>
+
+    <ng-template #i18n let-errors>
+        <span *ngIf="errors.required"> Value is required </span>
+    </ng-template>
+</fdp-form-group>

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { DialogComponent } from './dialog.component';
 import { DialogService } from './dialog-service/dialog.service';
 import { DialogModule } from './dialog.module';
@@ -6,8 +6,8 @@ import { Component, NgModule, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrowserModule } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { DIALOG_REF, DialogRef } from './dialog-utils/dialog-ref.class';
-import { DIALOG_CONFIG, DialogConfig } from './dialog-utils/dialog-config.class';
+import { DialogRef } from './utils/dialog-ref.class';
+import { DialogConfig } from './utils/dialog-config.class';
 import { RouterTestingModule } from '@angular/router/testing';
 import { NavigationStart, Router, RouterEvent, RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -47,12 +47,12 @@ describe('DialogComponent', () => {
     const mockRouter = { events: routerEventsSubject.asObservable() };
     let router: Router;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [TestModule, RouterModule, RouterTestingModule],
             providers: [
-                { provide: DIALOG_REF, useValue: dialogRef },
-                { provide: DIALOG_CONFIG, useValue: dialogConfig },
+                { provide: DialogRef, useValue: dialogRef },
+                { provide: DialogConfig, useValue: dialogConfig },
                 { provide: Router, useValue: mockRouter }
             ]
         });
@@ -105,7 +105,9 @@ describe('DialogComponent', () => {
     });
 
     it('should close after backdrop clicked', () => {
-        setup();
+        const customDialogConfig = { ...new DialogConfig(), backdropClickCloseable: true };
+
+        setup([{ token: DialogConfig, provider: { useValue: customDialogConfig } }]);
 
         const dismissSpy = spyOn(dialogRef, 'dismiss');
         fixture.detectChanges();
@@ -118,7 +120,7 @@ describe('DialogComponent', () => {
 
     it('should set custom position', () => {
         const customDialogConfig = { ...new DialogConfig(), position: { bottom: '100px', right: '50px' } };
-        setup([{ token: DIALOG_CONFIG, provider: { useValue: customDialogConfig } }]);
+        setup([{ token: DialogConfig, provider: { useValue: customDialogConfig } }]);
 
         expect(dialogComponent.dialogWindow.nativeElement.style.right).toEqual('50px');
         expect(dialogComponent.dialogWindow.nativeElement.style.bottom).toEqual('100px');
@@ -135,7 +137,7 @@ describe('DialogComponent', () => {
         };
         const customDialogConfig = { ...new DialogConfig(), ...customSize };
 
-        setup([{ token: DIALOG_CONFIG, provider: { useValue: customDialogConfig } }]);
+        setup([{ token: DialogConfig, provider: { useValue: customDialogConfig } }]);
 
         expect(dialogComponent.dialogWindow.nativeElement.style.width).toEqual(customSize.width);
         expect(dialogComponent.dialogWindow.nativeElement.style.height).toEqual(customSize.height);
@@ -151,7 +153,7 @@ describe('DialogComponent', () => {
             backdropClass: 'customBackdropClass',
             dialogPanelClass: 'customPanelClass'
         };
-        setup([{ token: DIALOG_CONFIG, provider: { useValue: customDialogConfig } }]);
+        setup([{ token: DialogConfig, provider: { useValue: customDialogConfig } }]);
 
         expect(fixture.nativeElement.querySelector('.fd-dialog')).toHaveClass('customBackdropClass');
         expect(fixture.nativeElement.querySelector('.fd-dialog__content')).toHaveClass('customPanelClass');
@@ -159,14 +161,14 @@ describe('DialogComponent', () => {
 
     it('should display in mobile mode', () => {
         const customDialogConfig = { ...new DialogConfig(), mobile: true };
-        setup([{ token: DIALOG_CONFIG, provider: { useValue: customDialogConfig } }]);
+        setup([{ token: DialogConfig, provider: { useValue: customDialogConfig } }]);
 
         expect(fixture.nativeElement.querySelector('.fd-dialog__content')).toHaveClass('fd-dialog__content--mobile');
     });
 
     it('should display in mobile mode', () => {
         const customDialogConfig = { ...new DialogConfig(), fullScreen: true };
-        setup([{ token: DIALOG_CONFIG, provider: { useValue: customDialogConfig } }]);
+        setup([{ token: DialogConfig, provider: { useValue: customDialogConfig } }]);
 
         expect(fixture.nativeElement.querySelector('.fd-dialog__content')).toHaveClass(
             'fd-dialog__content--full-screen'
@@ -175,7 +177,7 @@ describe('DialogComponent', () => {
 
     it('should display in mobile mode with no stretch', () => {
         const customDialogConfig = { ...new DialogConfig(), mobileOuterSpacing: true };
-        setup([{ token: DIALOG_CONFIG, provider: { useValue: customDialogConfig } }]);
+        setup([{ token: DialogConfig, provider: { useValue: customDialogConfig } }]);
 
         expect(fixture.nativeElement.querySelector('.fd-dialog__content')).toHaveClass(
             'fd-dialog__content--no-mobile-stretch'
@@ -184,7 +186,7 @@ describe('DialogComponent', () => {
 
     it('should be draggable', () => {
         const customDialogConfig = { ...new DialogConfig(), draggable: true };
-        setup([{ token: DIALOG_CONFIG, provider: { useValue: customDialogConfig } }]);
+        setup([{ token: DialogConfig, provider: { useValue: customDialogConfig } }]);
 
         expect(fixture.nativeElement.querySelector('.fd-dialog__content')).toHaveClass(
             'fd-dialog__content--draggable-grab'
@@ -195,7 +197,7 @@ describe('DialogComponent', () => {
 
     it('should be resizable', () => {
         const customDialogConfig = { ...new DialogConfig(), resizable: true };
-        setup([{ token: DIALOG_CONFIG, provider: { useValue: customDialogConfig } }]);
+        setup([{ token: DialogConfig, provider: { useValue: customDialogConfig } }]);
 
         expect(fixture.nativeElement.querySelector('.fd-dialog__resize-handle')).toBeTruthy();
 
@@ -210,7 +212,7 @@ describe('DialogComponent', () => {
             ariaLabelledBy: 'customAriLabelledBy',
             ariaDescribedBy: 'customAriaDescribedBy'
         };
-        setup([{ token: DIALOG_CONFIG, provider: { useValue: customDialogConfig } }]);
+        setup([{ token: DialogConfig, provider: { useValue: customDialogConfig } }]);
 
         const dialogWindowEl = fixture.nativeElement.querySelector('.fd-dialog__content');
 

@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { DIALOG_REF, DialogRef } from '@fundamental-ngx/core';
+import { DialogRef } from '@fundamental-ngx/core';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { DisplayedColumn } from './table-custom-columns-example.component';
 
@@ -7,7 +7,7 @@ import { DisplayedColumn } from './table-custom-columns-example.component';
     template: `
         <fd-dialog>
             <fd-dialog-header>
-                <h1 fd-dialog-title>Table Customization</h1>
+                <h1 fd-title>Table Customization</h1>
                 <ng-template fdTemplate="subheader">
                     <div fd-bar-middle>
                         <fd-bar-element>
@@ -26,6 +26,7 @@ import { DisplayedColumn } from './table-custom-columns-example.component';
                         </fd-bar-element>
                         <fd-bar-element [fullWidth]="true">
                             <fd-input-group glyph="search"
+                                            glyphAriaLabel="Submit"
                                             name="filter"
                                             [compact]="true"
                                             [(ngModel)]="filterPhrase">
@@ -65,26 +66,16 @@ import { DisplayedColumn } from './table-custom-columns-example.component';
             </fd-dialog-body>
 
             <fd-dialog-footer>
-                <fd-dialog-footer-button>
-                    <button
-                        fd-button
-                        fd-dialog-decisive-button
+                <fd-button-bar
                         fdType="emphasized"
                         label="Save"
-                        [compact]="true"
                         (click)="save()">
-                    </button>
-                </fd-dialog-footer-button>
-                <fd-dialog-footer-button>
-                    <button
-                        fd-button
-                        fd-dialog-decisive-button
-                        fdType="transparent"
+                </fd-button-bar>
+                <fd-button-bar
+                        fd-initial-focus
                         label="Cancel"
-                        [compact]="true"
                         (click)="dismiss()">
-                    </button>
-                </fd-dialog-footer-button>
+                </fd-button-bar>
             </fd-dialog-footer>
         </fd-dialog>
     `
@@ -95,7 +86,7 @@ export class TableCustomDialogComponent {
     allSelected = false;
     showError = false;
 
-    constructor(@Inject(DIALOG_REF) public dialogRef: DialogRef) {
+    constructor(public dialogRef: DialogRef) {
         this.columns = this.dialogRef.data.columns;
         this.allSelected = this._areAllSelected();
     }

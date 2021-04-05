@@ -6,7 +6,12 @@
     their input, they will receive a warning that their information will be lost.
     <br /><br />
     The wizard does not have any built-in functionality for moving through each step - the application developer will
-    manage this using the <code>[status]</code> input on each <code>fd-wizard-step</code>
+    manage this using the <code>[status]</code> input on each <code>fd-wizard-step</code> <br /><br />
+    By default, the wizard content's height will be the viewport height, minus the height of the shellbar, wizard header
+    and wizard footer. If the application developer wishes to use a custom height, a CSS value can be passed to the
+    <code>[contentHeight]</code> input. <br /><br />
+    A summary page can be created by adding the <code>[isSummary]</code> input to the final wizard step. The summary
+    page is optional, it is up to the developer to create this page.
 </description>
 <component-example>
     <fd-wizard-example></fd-wizard-example>
@@ -16,7 +21,8 @@
 
 <fd-docs-section-title id="Wizard-Customizable" componentName="wizard">Customizable Wizard</fd-docs-section-title>
 <description>
-    The wizard component can be customized with modifier inputs.
+    The wizard component can be customized with modifier inputs. Steps can be placed on separate pages, rather than
+    appended to the wizard, by setting the <code>[appendToWizard]</code> input to false.
 </description>
 <component-example>
     <fd-wizard-customizable-example></fd-wizard-customizable-example>
@@ -26,10 +32,9 @@
 
 <fd-docs-section-title id="Wizard-Mobile" componentName="wizard">Mobile Wizard</fd-docs-section-title>
 <description>
-    For mobile devices, use the <code>fd-bar</code> component with the
-    <code>barDesign="floating-footer"</code> modifier to achieve a floating footer. The Next Step button is placed
-    after the content whenever possible. However, it can be placed above the floating footer by adding the
-    <code>[floating]</code> input to the <code>fd-wizard-next-step</code>
+    For mobile devices, use the <code>fd-bar</code> component with the <code>barDesign="floating-footer"</code> modifier
+    to achieve a floating footer. The Next Step button is placed after the content whenever possible. However, it can be
+    placed above the floating footer by adding the <code>[floating]</code> input to the <code>fd-wizard-next-step</code>
     component.
 </description>
 <component-example>
@@ -37,3 +42,39 @@
 </component-example>
 <code-example [exampleFiles]="wizardMobileExample"></code-example>
 <separator></separator>
+
+<fd-docs-section-title id="Wizard-Branching" componentName="wizard">Branching Wizard</fd-docs-section-title>
+<description>
+    A branching step connector can be used by applying the <code>[branching]</code> boolean input to the wizard step.
+    This should be used if one step may lead to two different steps afterwords. In this example, step 2 may take a user
+    to either a credit card information page or a bank transfer information page.
+</description>
+<component-example>
+    <fd-wizard-branching-example></fd-wizard-branching-example>
+</component-example>
+<code-example [exampleFiles]="wizardBranchingExample"></code-example>
+
+<separator></separator>
+
+<fd-docs-section-title id="Wizard-Dialog" componentName="wizard">Dialog Wizard</fd-docs-section-title>
+<description>
+    The wizard can also be placed in a dialog. The <code>[appendToWizard]</code> input must be set to false, and a dialog
+    width and height must be provided to ensure the dialog does not change size as the user progresses through steps and
+    to the summary page.  It is recommended that width and height are set to <code>100%</code> but any value may be
+    provided.
+</description>
+<component-example>
+    <fd-wizard-dialog-example></fd-wizard-dialog-example>
+</component-example>
+<code-example [exampleFiles]="wizardDialogExample"></code-example>
+
+<separator></separator>
+
+<fd-docs-section-title id="Wizard-Ngfor" componentName="wizard">Wizard with steps in ngFor</fd-docs-section-title>
+<description>
+    Alternatively, wizard steps can be created by iterating over an array using <code>ngFor</code>.
+</description>
+<component-example>
+    <fd-wizard-ngfor-example></fd-wizard-ngfor-example>
+</component-example>
+<code-example [exampleFiles]="wizardNgForExample"></code-example>

@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { NotificationModule } from '@fundamental-ngx/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { NotificationModule } from '../notification.module';
 
 @Component({
     template: ` <span #directiveElement fd-notification-description>Notification Test</span> `
@@ -13,7 +13,7 @@ describe('NotificationDescriptionDirective', () => {
     let component: TestComponent;
     let fixture: ComponentFixture<TestComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [TestComponent],
             imports: [NotificationModule]

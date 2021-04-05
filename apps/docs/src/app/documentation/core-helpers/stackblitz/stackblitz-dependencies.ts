@@ -18,7 +18,7 @@ export class StackblitzDependencies {
         'core-js',
         'fundamental-styles',
         'moment',
-        'popper.js',
+        'hammerjs',
         'tslib',
         'typescript'
     ];
@@ -66,7 +66,18 @@ export class StackblitzDependencies {
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": [],
+            "assets": [
+            {
+                "glob": "**/css_variables.css",
+                "input": "./node_modules/@sap-theming/theming-base-content/content/Base/baseLib/",
+                "output": "./assets/theming-base/"
+            },
+            {
+                "glob": "**/*",
+                "input": "./node_modules/fundamental-styles/dist/theming/",
+                "output": "./assets/fundamental-styles-theming/"
+            }
+            ],
             "styles": [
               "src/styles.scss"
             ],
@@ -78,7 +89,6 @@ export class StackblitzDependencies {
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,

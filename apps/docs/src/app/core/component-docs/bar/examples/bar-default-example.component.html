@@ -1,8 +1,6 @@
 <div fd-bar>
     <div fd-bar-left>
-        <fd-bar-element>
-            <button fd-button [fdType]="'transparent'" [glyph]="navigationArrow$ | async" [compact]="true"></button>
-        </fd-bar-element>
+        <fd-button-bar [glyph]="navigationArrow$ | async"></fd-button-bar>
         <fd-bar-element>
             Left Section
         </fd-bar-element>
@@ -17,7 +15,7 @@
             Right Section
         </fd-bar-element>
         <fd-bar-element>
-            <fd-avatar size="xs" image="http://lorempixel.com/400/400/nature"> </fd-avatar>
+            <fd-avatar size="xs" image="http://picsum.photos/id/1018/400"> </fd-avatar>
         </fd-bar-element>
     </div>
 </div>

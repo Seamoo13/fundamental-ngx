@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 
 import { ButtonComponent } from '../../button/button.component';
-import { ContentDensity } from '../form-options';
+import { ContentDensity } from '@fundamental-ngx/core';
 
 import { CSS_CLASS_NAME, INPUT_GROUP_CHILD_TOKEN } from './constants';
 
@@ -37,7 +37,7 @@ export const inputGroupAddonChildProvider: Provider = {
  * ```
  * Button component:
  * ```
- * <fdp-input-group-addon><fdp-button>Action</fdp-button></fdp-input-group-addon>
+ * <fdp-input-group-addon><fdp-button label="Action"></fdp-button></fdp-input-group-addon>
  * ```
  *
  */

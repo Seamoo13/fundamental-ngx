@@ -1,17 +1,29 @@
-import { Component, EventEmitter, Inject, Output, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Inject, OnDestroy, OnInit, Output, ViewChild, ViewEncapsulation } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { Router } from '@angular/router';
 import { Libraries } from '../../utilities/libraries';
-import { ShellbarMenuItem, MenuKeyboardService, MenuComponent } from '@fundamental-ngx/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import {
+    ContentDensity,
+    ContentDensityService,
+    MenuComponent,
+    MenuKeyboardService,
+    ShellbarMenuItem,
+    ShellbarSizes,
+    ThemesService
+} from '@fundamental-ngx/core';
+import { SafeResourceUrl } from '@angular/platform-browser';
+import { DocsThemeService } from '../../services/docs-theme.service';
+import { fromEvent, Subject } from 'rxjs';
+import { debounceTime, startWith, takeUntil } from 'rxjs/operators';
+
 
 @Component({
     selector: 'fd-docs-toolbar',
     templateUrl: './toolbar.component.html',
     styleUrls: ['./toolbar.component.scss'],
-    providers: [MenuKeyboardService]
+    providers: [MenuKeyboardService, ThemesService]
 })
-export class ToolbarDocsComponent implements OnInit {
+export class ToolbarDocsComponent implements OnInit, OnDestroy {
     @Output()
     btnClicked: EventEmitter<undefined> = new EventEmitter<undefined>();
 
@@ -19,8 +31,11 @@ export class ToolbarDocsComponent implements OnInit {
     themeMenu: MenuComponent;
 
     cssUrl: SafeResourceUrl;
+    customCssUrl: SafeResourceUrl;
 
     library: string;
+
+    size: ShellbarSizes = 'm';
 
     version = {
         id: environment.version,
@@ -33,49 +48,47 @@ export class ToolbarDocsComponent implements OnInit {
         {
             name: 'Core Docs',
             callback: () => {
-                this.routerService.navigate(['core/home']);
+                this._routerService.navigate(['core/home']);
             }
         },
         {
             name: 'Platform Docs',
             callback: () => {
-                this.routerService.navigate(['platform/home']);
+                this._routerService.navigate(['platform/home']);
             }
         }
     ];
 
-    themes = [
-        {
-            id: 'sap_fiori_3',
-            name: 'Fiori 3'
-        },
-        {
-            id: 'sap_fiori_3_dark',
-            name: 'Fiori 3 Dark'
-        },
-        {
-            id: 'sap_fiori_3_hcb',
-            name: 'High Contrast Black'
-        },
-        {
-            id: 'sap_fiori_3_hcw',
-            name: 'High Contrast White'
-        }
-    ];
+    themes = this._themesService.themes;
+
+    /** An RxJS Subject that will kill the data stream upon destruction (for unsubscribing)  */
+    private readonly _onDestroy$: Subject<void> = new Subject<void>();
 
     constructor(
-        private routerService: Router,
-        @Inject('CURRENT_LIB') private currentLib: Libraries,
-        private menuKeyboardService: MenuKeyboardService,
-        private sanitizer: DomSanitizer
+        private _routerService: Router,
+        private _themesService: ThemesService,
+        private _docsThemeService: DocsThemeService,
+        private _contentDensityService: ContentDensityService,
+        @Inject('CURRENT_LIB') private _currentLib: Libraries,
     ) {
-        this.library = routerService.routerState.snapshot.url.includes('core') ? 'Core' : 'Platform';
+        this.library = _routerService.routerState.snapshot.url.includes('core') ? 'Core' : 'Platform';
+
+        this._docsThemeService.onThemeChange.pipe(
+            takeUntil(this._onDestroy$)
+        ).subscribe(theme => {
+            this.cssUrl = theme.themeUrl;
+            this.customCssUrl = theme.customThemeUrl;
+        });
     }
 
     ngOnInit(): void {
-        this.cssUrl = this.sanitizer.bypassSecurityTrustResourceUrl('assets/sap_fiori_3.css');
-
         this.versions = [
+            {id: '0.27.0', url: 'https://602a61e08b3cf200074fa0b5--fundamental-ngx.netlify.app/'},
+            {id: '0.26.0', url: 'https://600860290fee570007d7f660--fundamental-ngx.netlify.app/'},
+            {id: '0.25.1', url: 'https://5fdb2c4892110a00080b0895--fundamental-ngx.netlify.app/'},
+            {id: '0.24.1', url: 'https://5fbd1c1239f44a000736c439--fundamental-ngx.netlify.app/'},
+            {id: '0.23.0', url: 'https://5f96ff4047c5f300070eb8a1--fundamental-ngx.netlify.app/'},
+            {id: '0.22.0', url: 'https://5f776fb812cfa300086de86a--fundamental-ngx.netlify.app/'},
             {id: '0.21.0', url: 'https://5f355f63718e9200075585e1--fundamental-ngx.netlify.app/'},
             {id: '0.20.0', url: 'https://5f0630964a7a370007f93dc4--fundamental-ngx.netlify.app/'},
             {id: '0.19.0', url: 'https://5ef288ca158ebd0008946f4d--fundamental-ngx.netlify.app/'},
@@ -90,13 +103,36 @@ export class ToolbarDocsComponent implements OnInit {
         ];
 
         this.versions.unshift(this.version);
+
+        if (!(this.cssUrl && this.customCssUrl)) {
+            this.selectTheme(this.themes[0].id);
+        }
+
+        fromEvent(window, 'resize')
+            .pipe(startWith(1), debounceTime(60), takeUntil(this._onDestroy$))
+            .subscribe(() => this.size = this._getShellbarSize());
+    }
+
+    ngOnDestroy(): void {
+        this._onDestroy$.next();
+        this._onDestroy$.complete();
     }
 
     selectTheme(selectedTheme: string): void {
-        this.cssUrl = this.sanitizer.bypassSecurityTrustResourceUrl('assets/' + selectedTheme + '.css');
+        this.cssUrl = this._themesService.setTheme(selectedTheme);
+        this.customCssUrl = this._themesService.setCustomTheme(selectedTheme);
     }
 
     selectVersion(version: any): void {
         window.open(version.url, '_blank');
+    }
+
+    selectDensity(density: ContentDensity): void {
+        this._contentDensityService.contentDensity.next(density);
+    }
+
+    private _getShellbarSize(): ShellbarSizes {
+        const width = window.innerWidth;
+        return width < 599 ? 's' : 'm';
     }
 }

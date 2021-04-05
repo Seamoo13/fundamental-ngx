@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { async, TestBed, ComponentFixture } from '@angular/core/testing';
+import { TestBed, ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { FormGroupComponent } from '@fundamental-ngx/platform';
@@ -93,7 +93,7 @@ describe('Simple Form', () => {
     let fixture: ComponentFixture<SimpleFormTestComponent>;
     let host: SimpleFormTestComponent;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [ReactiveFormsModule, FdpFormGroupModule, PlatformInputModule],
             declarations: [SimpleFormTestComponent]
@@ -117,10 +117,11 @@ describe('Simple Form', () => {
 
     it('should highlight the required fields', () => {
         const labels: ElementRef<HTMLElement>[] = fixture.debugElement.queryAll(By.css('label'));
+        const getFormLabelElement = (label: ElementRef<HTMLElement>) => fixture.debugElement.query(By.css('span')).nativeElement;
         expect(labels.length).toBe(3);
-        expect(labels[0].nativeElement.classList.contains('fd-form-label--required')).toBeTruthy();
-        expect(labels[1].nativeElement.classList.contains('fd-form-label--required')).toBeTruthy();
-        expect(labels[2].nativeElement.classList.contains('fd-form-label--required')).toBeFalsy();
+        expect(getFormLabelElement(labels[0]).classList.contains('fd-form-label--required')).toBeTruthy();
+        expect(getFormLabelElement(labels[1]).classList.contains('fd-form-label--required')).toBeTruthy();
+        expect(getFormLabelElement(labels[2]).classList.contains('fd-form-label--required')).toBeTruthy();
     });
 
     it('should be able to automatically register child formControls to parent formGroup', () => {
@@ -228,7 +229,7 @@ describe('Nested Form Groups', () => {
     let fixture: ComponentFixture<NestedFormGroupsTestComponent>;
     let host: NestedFormGroupsTestComponent;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [ReactiveFormsModule, FdpFormGroupModule, PlatformInputModule],
             declarations: [NestedFormGroupsTestComponent]

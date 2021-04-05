@@ -31,7 +31,8 @@ import {
     OnDestroy,
     Input,
     ChangeDetectionStrategy,
-    AfterContentInit
+    AfterContentInit,
+    ViewEncapsulation
 } from '@angular/core';
 
 import { MenuItemComponent } from './menu-item.component';
@@ -52,7 +53,8 @@ let menuIdCounter = 0;
     selector: 'fdp-menu',
     templateUrl: './menu.component.html',
     styleUrls: ['./menu.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None
 })
 export class MenuComponent implements OnInit, AfterViewInit, AfterContentInit, OnDestroy {
     private _id: string;
@@ -71,7 +73,7 @@ export class MenuComponent implements OnInit, AfterViewInit, AfterContentInit, O
 
     /** Density for Menu */
     @Input()
-    contentDensity: ContentDensity = 'cozy';
+    contentDensity: ContentDensity;
 
     /**
      * Horizontal position of menu in relation to trigger element.

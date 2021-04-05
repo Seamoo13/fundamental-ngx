@@ -1,6 +1,6 @@
 import { NotificationActionsDirective } from './notification-actions.directive';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { NotificationModule } from '@fundamental-ngx/core';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { NotificationModule } from '../notification.module';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
@@ -14,7 +14,7 @@ describe('NotificationActionsDirective', () => {
     let component: TestComponent;
     let fixture: ComponentFixture<TestComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [TestComponent],
             imports: [NotificationModule]

@@ -1,16 +1,8 @@
 .fd-combobox-custom-class {
-    display: block;
-
-    .fd-combobox-popover-custom {
-        display: block;
-    }
+    display: inline-block;
 
     .fd-combobox-shellbar-custom {
         display: inline-block;
-    }
-
-    .fd-combobox-custom-list {
-        max-width: 100%;
     }
 }
 
@@ -20,4 +12,8 @@
 
 .fd-list__item.fd-combobox-list-item {
     cursor: pointer;
+}
+
+.fd-combobox-full-width {
+    width: 100%;
 }

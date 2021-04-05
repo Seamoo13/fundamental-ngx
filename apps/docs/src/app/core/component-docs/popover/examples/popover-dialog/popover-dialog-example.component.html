@@ -3,12 +3,12 @@
 <ng-template #template let-dialog let-dialogConfig="dialogConfig">
     <fd-dialog [dialogConfig]="dialogConfig" [dialogRef]="dialog">
         <fd-dialog-header>
-            <h1 fd-dialog-title>Popover Example</h1>
+            <h1 fd-title>Popover Example</h1>
             <button fd-dialog-close-button (click)="dialog.dismiss()"></button>
         </fd-dialog-header>
 
         <fd-dialog-body>
-            <fd-popover [noArrow]="false" [placement]="'bottom'">
+            <fd-popover [noArrow]="false">
                 <fd-popover-control>
                     <button fd-button label="Click me!"></button>
                 </fd-popover-control>

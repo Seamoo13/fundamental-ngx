@@ -1,13 +1,14 @@
-import { Component, Inject, Optional } from '@angular/core';
-import { DIALOG_CONFIG, DialogConfig } from '../dialog-utils/dialog-config.class';
-import { DIALOG_REF, DialogRef } from '../../dialog/dialog-utils/dialog-ref.class';
+import { AfterContentInit, Component, ContentChildren, ElementRef, Optional, QueryList } from '@angular/core';
+import { DialogConfig } from '../utils/dialog-config.class';
+import { DialogRef } from '../../dialog/utils/dialog-ref.class';
+import { WizardComponent } from '../../wizard/wizard.component';
 
 /**
  * Applies fundamental layout and styling to the contents of a dialog body.
  *
  * ```html
  * <fd-dialog-body>
- *     <div>Dialog body content</div>
+ *     <!-- Content -->
  * </fd-dialog-body>
  * ```
  */
@@ -19,9 +20,26 @@ import { DIALOG_REF, DialogRef } from '../../dialog/dialog-utils/dialog-ref.clas
         '[class.fd-dialog__body--no-vertical-padding]': '!dialogConfig.verticalPadding'
     }
 })
-export class DialogBodyComponent {
+export class DialogBodyComponent implements AfterContentInit {
+
+    /** @hidden */
+    @ContentChildren(WizardComponent, { descendants: true })
+    _wizard: QueryList<WizardComponent>;
+
+    /** @hidden */
     constructor(
-        @Optional() @Inject(DIALOG_CONFIG) public dialogConfig: DialogConfig,
-        @Optional() @Inject(DIALOG_REF) public dialogRef: DialogRef
+        private _elRef: ElementRef,
+        @Optional() public dialogConfig: DialogConfig,
+        @Optional() public dialogRef: DialogRef
     ) {}
+
+    /** @hidden */
+    ngAfterContentInit(): void {
+        if (this._wizard && this._wizard.first) {
+            const style = this._elRef.nativeElement.style;
+            style.paddingTop = '0';
+            style.paddingBottom = '0';
+            style.overflowY = 'hidden';
+        }
+    }
 }
