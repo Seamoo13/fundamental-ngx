@@ -15,6 +15,7 @@ exports.config = {
     user: process.env.SAUCE_USERNAME,
     key: process.env.SAUCE_ACCESS_KEY,
     region: 'eu',
+
     //
     // ==================
     // Specify Test Files
@@ -25,7 +26,7 @@ exports.config = {
     // directory is where your package.json resides, so `wdio` will be called from there.
     //
     specs: [
-         './e2e/wdio/**/*.e2e-spec.ts',
+         './e2e/wdio/platform/**/dummy.e2e-spec.ts',
     ],
     // Patterns to exclude.
     exclude: [
@@ -34,7 +35,7 @@ exports.config = {
     suites: {
         platformA: [
             './e2e/wdio/platform/**/action-bar.e2e-spec.ts',
-            './e2e/wdio/platform/**/action-list-item.e2e-spec.ts',
+            // './e2e/wdio/platform/**/action-list-item.e2e-spec.ts',
             // './e2e/wdio/platform/**/approval-flow.e2e-spec.ts',
             // './e2e/wdio/platform/**/checkbox.e2e-spec.ts',
             // './e2e/wdio/platform/**/checkbox-group.e2e-spec.ts',
@@ -206,7 +207,7 @@ exports.config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: 'https://localhost:4200/',
+    baseUrl: 'https://sap.dev:4200/',
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 30000,
@@ -230,9 +231,11 @@ exports.config = {
             // sauceConnectOpts: {
                 // noSslBumpDomains: ['all'],
                 // noOcspVerify: true,
+                // capath: '/etc/ssl/certs',
+                // noProxyCaching: true
             // },
             // acceptSslCerts: true,
-            trustAllSSLCertificates: true,
+            // trustAllSSLCertificates: true,
             // strictSSL: false,
          }],
         ['image-comparison',
