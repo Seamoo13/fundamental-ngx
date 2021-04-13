@@ -37,7 +37,8 @@ jobs:
         run: npm ci
 
       - name: add host
-        run: sudo echo "127.0.0.1 sap.dev" | sudo tee -a /etc/hosts
+        run: sudo echo "127.0.0.1 localhost" | sudo tee -a /etc/hosts
+#        run: sudo echo "127.0.0.1 sap.dev" | sudo tee -a /etc/hosts
 
     # runs the PlatformA e2e tests
   run_platformA_e2e_tests:
