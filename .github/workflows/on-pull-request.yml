@@ -37,7 +37,16 @@ jobs:
         run: npm ci
 
       - name: add host
-        run: sudo echo "127.0.0.1 sap.dev" | sudo tee -a /etc/hosts
+        run: sudo echo "127.0.0.1 sap.dev" | sudo tee -a /etc/hosts && sudo echo "162.222.75.243 saucelabs" | sudo tee -a /etc/hosts
+#
+#      - name: start app
+#        run: ng serve --disable-host-check --ssl --no-watch & wait-on https://localhost:4200
+
+#      - name: Sauce Connect Proxy Action
+#        uses: saucelabs/sauce-connect-action@v1.1.3
+#        with:
+#          username: ${{ secrets.SAUCELABS_USERNAME }}
+#          accessKey: ${{ secrets.SAUCELABS_ACCESS_KEY }}
 
     # runs the PlatformA e2e tests
   run_platformA_e2e_tests:
@@ -67,8 +76,135 @@ jobs:
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: npm ci
 
+      - name: add host
+        run: sudo echo "127.0.0.1 sap.dev" | sudo tee -a /etc/hosts
+
       - name: Run platformA e2e tests
-        run: npm run e2e:wdio:saucelabs:platformA
+        run: npm run e2e:platformA:ci
+
+  run_platformB_e2e_tests:
+    runs-on: ubuntu-latest
+    needs: build_and_cache
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: actions/cache@v2.1.4
+        id: cache-build
+        with:
+          path: |
+            ~/.npm
+            node_modules
+            dist
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+      - name: build all
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm run build-all
+
+      - name: lint and test
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: bash ./ci-scripts/test-lint.sh && npm run test:coveralls && npm run build-pack-library
+
+      - name: install dependencies
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: add host
+        run: sudo echo "127.0.0.1 sap.dev" | sudo tee -a /etc/hosts
+
+      - name: Run platformB e2e tests
+        run: npm run e2e:platformB:ci
+
+#  run_core_e2e_tests:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2.3.4
+#      - uses: actions/cache@v2.1.4
+#        id: cache-build
+#        with:
+#          path: |
+#            ~/.npm
+#            node_modules
+#            dist
+#          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#          restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#
+#      - name: build all
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+#        run: npm run build-all
+#
+#      - name: lint and test
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+#        run: bash ./ci-scripts/test-lint.sh && npm run test:coveralls && npm run build-pack-library
+#
+#      - name: install dependencies
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+#        run: npm ci
+#
+#      - name: add host
+#        run: sudo echo "127.0.0.1 sap.dev" | sudo tee -a /etc/hosts
+#
+#      - name: Run core e2e tests
+#        run: npm run e2e:core:ci
+#
+  run_platform_unit_tests:
+    runs-on: ubuntu-latest
+    needs: build_and_cache
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: actions/cache@v2.1.4
+        id: cache-build
+        with:
+          path: |
+            ~/.npm
+             node_modules
+             dist
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+      - name: build all
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm run build-all
+
+      - name: lint and test
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: bash ./ci-scripts/test-lint.sh && npm run test:coveralls && npm run build-pack-library
+
+      - name: install dependencies
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: run platform unit tests
+        run: npm run test:platform
+#
+#  run_core_unit_tests:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2.3.4
+#      - uses: actions/cache@v2.1.4
+#        id: cache-build
+#        with:
+#          path: |
+#            ~/.npm
+#             node_modules
+#             dist
+#          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#          restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#
+#      - name: build all
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+#        run: npm run build-all
+#
+#      - name: lint and test
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+#        run: bash ./ci-scripts/test-lint.sh && npm run test:coveralls && npm run build-pack-library
+#
+#      - name: install dependencies
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+#        run: npm ci
+#
+#      - name: run core unit tests
+#        run: npm run test:core
 
   # runs the PlatformB e2e tests
 #  run_platformB_e2e_tests:
