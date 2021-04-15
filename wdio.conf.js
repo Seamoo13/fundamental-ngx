@@ -102,30 +102,30 @@ exports.config = {
         //     platformName: 'Windows 10',
         //     'sauce:options': {
         //         screenResolution: '1920x1080',
-        //         name: 'e2e-win-internet-explorer ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
+        //         name: 'e2e-win-internet-explorer ' + process.env.GITHUB_HEAD_REF,
         //         requireWindowFocus: true,
         //     }
         // },
-        // {
-        //     browserName: 'MicrosoftEdge',
-        //     browserVersion: 'latest',
-        //     platformName: 'Windows 10',
-        //     acceptInsecureCerts: true,
-        //     'sauce:options': {
-        //         screenResolution: '1920x1080',
-        //         name: 'e2e-win-edge ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-        //     }
-        // },
-        // {
-        //     browserName: 'firefox',
-        //     browserVersion: 'latest',
-        //     platformName: 'Windows 10',
-        //     acceptInsecureCerts: true,
-        //     'sauce:options': {
-        //         name: 'e2e-win-firefox ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-        //         screenResolution: '1920x1080',
-        //     }
-        // },
+        {
+            browserName: 'MicrosoftEdge',
+            browserVersion: 'latest',
+            platformName: 'Windows 10',
+            acceptInsecureCerts: true,
+            'sauce:options': {
+                screenResolution: '1920x1080',
+                name: 'e2e-win-edge ' + process.env.GITHUB_HEAD_REF,
+            }
+        },
+        {
+            browserName: 'firefox',
+            browserVersion: 'latest',
+            platformName: 'Windows 10',
+            acceptInsecureCerts: true,
+            'sauce:options': {
+                name: 'e2e-win-firefox ' + process.env.GITHUB_HEAD_REF,
+                screenResolution: '1920x1080',
+            }
+        },
         {
             browserName: 'chrome',
             browserVersion: 'latest',
@@ -133,49 +133,46 @@ exports.config = {
             acceptInsecureCerts: true,
             'sauce:options': {
                 screenResolution: '1920x1080',
-                name: 'e2e-win-chrome_github-action-test', // + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-                extendedDebugging: true,
-                // tunnelIdentifier: process.env.tunnelIdentifier,
-                // doctor: true
+                name: 'e2e-win-chrome ' + process.env.GITHUB_HEAD_REF,
             }
         },
-        // {
-        //     browserName: 'chrome',
-        //     platformName: 'macOS 10.15',
-        //     browserVersion: 'latest',
-        //     acceptInsecureCerts: true,
-        //     'sauce:options': {
-        //         name: 'e2e-MAC-chrome ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-        //         screenResolution: '1920x1440',
-        //     }
-        // },
-        // {
-        //     browserName: 'firefox',
-        //     platformName: 'macOS 10.15',
-        //     browserVersion: 'latest',
-        //     acceptInsecureCerts: true,
-        //     'sauce:options': {
-        //         screenResolution: '1920x1440',
-        //         name: 'e2e-MAC-firefox ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-        //     }
-        // },
-        // {
-        //     browserName: 'MicrosoftEdge',
-        //     platformName: 'macOS 10.15',
-        //     browserVersion: 'latest',
-        //     acceptInsecureCerts: true,
-        //     'sauce:options': {
-        //         screenResolution: '1920x1440',
-        //         name: 'e2e-MAC-Edge ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-        //     }
-        // },
+        {
+            browserName: 'chrome',
+            platformName: 'macOS 10.15',
+            browserVersion: 'latest',
+            acceptInsecureCerts: true,
+            'sauce:options': {
+                name: 'e2e-MAC-chrome ' + process.env.GITHUB_HEAD_REF,
+                screenResolution: '1920x1440',
+            }
+        },
+        {
+            browserName: 'firefox',
+            platformName: 'macOS 10.15',
+            browserVersion: 'latest',
+            acceptInsecureCerts: true,
+            'sauce:options': {
+                screenResolution: '1920x1440',
+                name: 'e2e-MAC-firefox ' + process.env.GITHUB_HEAD_REF,
+            }
+        },
+        {
+            browserName: 'MicrosoftEdge',
+            platformName: 'macOS 10.15',
+            browserVersion: 'latest',
+            acceptInsecureCerts: true,
+            'sauce:options': {
+                screenResolution: '1920x1440',
+                name: 'e2e-MAC-Edge ' + process.env.GITHUB_HEAD_REF,
+            }
+        },
         // {
         //     browserName: 'safari',
         //     browserVersion: '13.1',
         //     platformName: 'macOS 10.15',
         //     'sauce:options': {
         //         screenResolution: '1920x1440',
-        //         name: 'e2e-MAC-safari ' + process.env.TRAVIS_BUILD_ID,
+        //         name: 'e2e-MAC-safari ' + process.env.GITHUB_HEAD_REF,
         //     }
         // }
     ],
@@ -262,7 +259,7 @@ exports.config = {
     framework: 'jasmine',
     //
     // The number of times to retry the entire specfile when it fails as a whole
-    specFileRetries: 0,
+    specFileRetries: 2,
     //
     // Delay in seconds between the spec file retry attempts
     specFileRetriesDelay: 0,
