@@ -7,7 +7,8 @@ on: pull_request
 env:
   SAUCE_USERNAME: ${{ secrets.SAUCELABS_USERNAME }}
   SAUCE_ACCESS_KEY: ${{ secrets.SAUCELABS_ACCESS_KEY }}
-  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+#  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+  GITHUB_HEAD_REF: ${{ github.HEAD_REF }}
 
 jobs:
   build_and_cache:
@@ -24,6 +25,10 @@ jobs:
             dist
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      - name: install dependencies
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm ci
+
       - name: build all
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: npm run build-all
@@ -32,23 +37,9 @@ jobs:
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: bash ./ci-scripts/test-lint.sh && npm run test:coveralls && npm run build-pack-library
 
-      - name: install dependencies
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        run: npm ci
-
       - name: add host
         run: sudo echo "127.0.0.1 sap.dev" | sudo tee -a /etc/hosts && sudo echo "162.222.75.243 saucelabs" | sudo tee -a /etc/hosts
-#
-#      - name: start app
-#        run: ng serve --disable-host-check --ssl --no-watch & wait-on https://localhost:4200
 
-#      - name: Sauce Connect Proxy Action
-#        uses: saucelabs/sauce-connect-action@v1.1.3
-#        with:
-#          username: ${{ secrets.SAUCELABS_USERNAME }}
-#          accessKey: ${{ secrets.SAUCELABS_ACCESS_KEY }}
-
-    # runs the PlatformA e2e tests
   run_platformA_e2e_tests:
     runs-on: ubuntu-latest
     needs: build_and_cache
@@ -64,6 +55,10 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
+      - name: install dependencies
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm ci
+
       - name: build all
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: npm run build-all
@@ -71,10 +66,6 @@ jobs:
       - name: lint and test
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: bash ./ci-scripts/test-lint.sh && npm run test:coveralls && npm run build-pack-library
-
-      - name: install dependencies
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        run: npm ci
 
       - name: add host
         run: sudo echo "127.0.0.1 sap.dev" | sudo tee -a /etc/hosts
@@ -97,6 +88,10 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
+      - name: install dependencies
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm ci
+
       - name: build all
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: npm run build-all
@@ -105,48 +100,44 @@ jobs:
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: bash ./ci-scripts/test-lint.sh && npm run test:coveralls && npm run build-pack-library
 
-      - name: install dependencies
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        run: npm ci
-
       - name: add host
         run: sudo echo "127.0.0.1 sap.dev" | sudo tee -a /etc/hosts
 
       - name: Run platformB e2e tests
         run: npm run e2e:platformB:ci
 
-#  run_core_e2e_tests:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2.3.4
-#      - uses: actions/cache@v2.1.4
-#        id: cache-build
-#        with:
-#          path: |
-#            ~/.npm
-#            node_modules
-#            dist
-#          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-#          restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-#
-#      - name: build all
-#        if: steps.cache-build.outputs.cache-hit != 'true'
-#        run: npm run build-all
-#
-#      - name: lint and test
-#        if: steps.cache-build.outputs.cache-hit != 'true'
-#        run: bash ./ci-scripts/test-lint.sh && npm run test:coveralls && npm run build-pack-library
-#
-#      - name: install dependencies
-#        if: steps.cache-build.outputs.cache-hit != 'true'
-#        run: npm ci
-#
-#      - name: add host
-#        run: sudo echo "127.0.0.1 sap.dev" | sudo tee -a /etc/hosts
-#
-#      - name: Run core e2e tests
-#        run: npm run e2e:core:ci
-#
+  run_core_e2e_tests:
+    runs-on: ubuntu-latest
+    needs: build_and_cache
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: actions/cache@v2.1.4
+        id: cache-build
+        with:
+          path: |
+            ~/.npm
+            node_modules
+            dist
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+      - name: install dependencies
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: build all
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm run build-all
+
+      - name: lint and test
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: bash ./ci-scripts/test-lint.sh && npm run test:coveralls && npm run build-pack-library
+
+      - name: add host
+        run: sudo echo "127.0.0.1 sap.dev" | sudo tee -a /etc/hosts
+
+      - name: Run core e2e tests
+        run: npm run e2e:core:ci
+
   run_platform_unit_tests:
     runs-on: ubuntu-latest
     needs: build_and_cache
@@ -162,6 +153,10 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
+      - name: install dependencies
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm ci
+
       - name: build all
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: npm run build-all
@@ -170,14 +165,95 @@ jobs:
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: bash ./ci-scripts/test-lint.sh && npm run test:coveralls && npm run build-pack-library
 
+      - name: run platform unit tests
+        run: npm run test:platform
+
+  run_core_unit_tests:
+    runs-on: ubuntu-latest
+    needs: build_and_cache
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: actions/cache@v2.1.4
+        id: cache-build
+        with:
+          path: |
+            ~/.npm
+             node_modules
+             dist
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
       - name: install dependencies
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: run platform unit tests
-        run: npm run test:platform
+      - name: build all
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm run build-all
+
+      - name: lint and test
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: bash ./ci-scripts/test-lint.sh && npm run test:coveralls && npm run build-pack-library
+
+      - name: run core unit tests
+        run: npm run test:core
+
+#  github_direct_e2e_tests:
+#    needs: build_and_cache
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        os: [macos-latest]
+#        browser: [firefox, chrome, edge]
+#        screen: [1920x1080]
 #
-#  run_core_unit_tests:
+#    runs-on: ${{ matrix.os }}
+#    steps:
+#      - uses: actions/checkout@v2.3.4
+#      - uses: actions/cache@v2.1.4
+#        id: cache-build
+#        with:
+#          path: |
+#            ~/.npm
+#            node_modules
+#            dist
+#          key: ${{ runner.os }}-build-${{ matrix.browser }}-node-${{ hashFiles('**/package-lock.json') }}
+#          restore-keys: ${{ runner.os }}-build-${{ matrix.browser }}-node-${{ hashFiles('**/package-lock.json') }}
+#
+#      - name: install brew
+#        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+#        if: matrix.os == 'macos-latest' && steps.cache-build.outputs.cache-hit != 'true'
+#
+#      - name: install FF - Windows
+#        run: echo "::add-path::$env:GeckoWebDriver"
+#        if: matrix.browser == 'firefox' && matrix.os == 'windows-latest'
+#
+#      - name: install dependencies
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+#        run: npm ci
+#
+#      - name: build all
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+#        run: npm run build-all
+#
+#      - name: lint and test
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+#        run: bash ./ci-scripts/test-lint.sh && npm run test:coveralls && npm run build-pack-library
+#
+#      - name: clean install dependencies
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+#        run: npm ci
+#
+#      - name: add host
+#        run: sudo echo "127.0.0.1 sap.dev" | sudo tee -a /etc/hosts
+#
+#      - name: Run platform A e2e tests
+#        run: npm run e2e:platformA:ci
+#        env:
+#          browser: ${{ matrix.browser }}
+#          screen: ${{ matrix.screen }}
+
+#  run_all_unit_tests:
 #    runs-on: ubuntu-latest
 #    steps:
 #      - uses: actions/checkout@v2.3.4
@@ -203,32 +279,5 @@ jobs:
 #        if: steps.cache-build.outputs.cache-hit != 'true'
 #        run: npm ci
 #
-#      - name: run core unit tests
-#        run: npm run test:core
-
-  # runs the PlatformB e2e tests
-#  run_platformB_e2e_tests:
-#    needs: build_and_cache
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Run platformB e2e tests
-#        run: npm run e2e:platformB:ci
-
-#      # Runs a single command using the runners shell
-#      - name: Run a one-line script
-#        run: echo Hello, world!
-#
-#      # Runs a set of commands using the runners shell
-#      - name: Run a multi-line script
-#        run: |
-#          echo Add other actions to build,
-#          echo test, and deploy your project.
-
-
-      # downloads sauce connect and runs tunnel
-#      - name: Sauce Connect Proxy Action
-#        uses: saucelabs/sauce-connect-action@v1.1.3
-#        with:
-#          username: ${{ secrets.SAUCELABS_USERNAME }}
-#          accessKey: ${{ secrets.SAUCELABS_ACCESS_KEY }}
-#          tunnelIdentifier: sauce-actions-tunnel
+#      - name: run all unit tests
+#        run: npm run test:all
