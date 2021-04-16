@@ -22,6 +22,8 @@
     "copy-app-docs": "cp libs/core/README.md apps/docs/src/assets/CORE_README.md && cp PLATFORM_README.md apps/docs/src/assets/PLATFORM_README.md",
     "deploy-docs": "angular-cli-ghpages -d dist/apps/docs --branch gh-pages",
     "sync-versions": "./ci-scripts/sync-version.sh",
+    "e2e:wdio:test": "TS_NODE_PROJECT=./e2e/tsconfig.json npx wdio wdio.conf.js --suite platformA",
+    "e2e:wdio:serve": "ng serve --no-watch & wait-on http://localhost:4200",
     "e2e:wdio:saucelabs": "TS_NODE_PROJECT=./e2e/tsconfig.json npx wdio wdio.conf.js",
     "e2e:wdio:saucelabs:core": "TS_NODE_PROJECT=./e2e/tsconfig.json npx wdio wdio.conf.js --spec core",
     "e2e:wdio:saucelabs:platformA": "TS_NODE_PROJECT=./e2e/tsconfig.json npx wdio wdio.conf.js --suite platformA",
