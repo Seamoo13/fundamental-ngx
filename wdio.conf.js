@@ -11,10 +11,7 @@ exports.config = {
     //
     // WebdriverIO allows it to run your tests in arbitrary locations (e.g. locally or
     // on a remote machine).
-    // runner: 'local',
-    user: process.env.SAUCE_USERNAME,
-    key: process.env.SAUCE_ACCESS_KEY,
-    region: 'eu',
+    runner: 'local',
     //
     // ==================
     // Specify Test Files
@@ -35,43 +32,43 @@ exports.config = {
         platformA: [
             './e2e/wdio/platform/**/action-bar.e2e-spec.ts',
             './e2e/wdio/platform/**/action-list-item.e2e-spec.ts',
-            './e2e/wdio/platform/**/approval-flow.e2e-spec.ts',
-            './e2e/wdio/platform/**/checkbox.e2e-spec.ts',
-            './e2e/wdio/platform/**/checkbox-group.e2e-spec.ts',
-            './e2e/wdio/platform/**/combobox.e2e-spec.ts',
-            './e2e/wdio/platform/**/date-picker.e2e-spec.ts',
-            './e2e/wdio/platform/**/date-time-picker.e2e-spec.ts',
-            './e2e/wdio/platform/**/display-list-item.e2e-spec.ts',
-            './e2e/wdio/platform/**/dynamic-page-layout.e2e-spec.ts',
-            './e2e/wdio/platform/**/feed-input.e2e-spec.ts',
-            './e2e/wdio/platform/**/file-uploader.e2e-spec.ts',
-            './e2e/wdio/platform/**/info-label.e2e-spec.ts',
-            './e2e/wdio/platform/**/input.e2e-spec.ts',
-            './e2e/wdio/platform/**/input-group.e2e-spec.ts',
-            './e2e/wdio/platform/**/link.e2e-spec.ts',
-            './e2e/wdio/platform/**/list.e2e-spec.ts',
+            // './e2e/wdio/platform/**/approval-flow.e2e-spec.ts',
+            // './e2e/wdio/platform/**/checkbox.e2e-spec.ts',
+            // './e2e/wdio/platform/**/checkbox-group.e2e-spec.ts',
+            // './e2e/wdio/platform/**/combobox.e2e-spec.ts',
+            // './e2e/wdio/platform/**/date-picker.e2e-spec.ts',
+            // './e2e/wdio/platform/**/date-time-picker.e2e-spec.ts',
+            // './e2e/wdio/platform/**/display-list-item.e2e-spec.ts',
+            // './e2e/wdio/platform/**/dynamic-page-layout.e2e-spec.ts',
+            // './e2e/wdio/platform/**/feed-input.e2e-spec.ts',
+            // './e2e/wdio/platform/**/file-uploader.e2e-spec.ts',
+            // './e2e/wdio/platform/**/info-label.e2e-spec.ts',
+            // './e2e/wdio/platform/**/input.e2e-spec.ts',
+            // './e2e/wdio/platform/**/input-group.e2e-spec.ts',
+            // './e2e/wdio/platform/**/link.e2e-spec.ts',
+            // './e2e/wdio/platform/**/list.e2e-spec.ts',
         ],
-        platformB: [
-            './e2e/wdio/platform/**/menu.e2e-spec.ts',
-            './e2e/wdio/platform/**/menu-button.e2e-spec.ts',
-            './e2e/wdio/platform/**/multi-input.e2e-spec.ts',
-            './e2e/wdio/platform/**/object-list-item.e2e-spec.ts',
-            './e2e/wdio/platform/**/object-marker.e2e-spec.ts',
-            './e2e/wdio/platform/**/object-status.e2e-spec.ts',
-            './e2e/wdio/platform/**/object-attribute.e2e-spec.ts',
-            './e2e/wdio/platform/**/panel.e2e-spec.ts',
-            './e2e/wdio/platform/**/radio-button-group.e2e-spec.ts',
-            './e2e/wdio/platform/**/search.e2e-spec.ts',
-            './e2e/wdio/platform/**/slider.e2e-spec.ts',
-            './e2e/wdio/platform/**/split-menu-button.e2e-spec.ts',
-            './e2e/wdio/platform/**/standard-list-item.e2e-spec.ts',
-            './e2e/wdio/platform/**/step-input.e2e-spec.ts',
-            './e2e/wdio/platform/**/switch.e2e-spec.ts',
-            './e2e/wdio/platform/**/textarea.e2e-spec.ts',
-            './e2e/wdio/platform/**/thumbnail.e2e-spec.ts',
-            './e2e/wdio/platform/**/value-help-dialog.e2e-spec.ts',
-            './e2e/wdio/platform/**/time-picker.e2e-spec.ts',
-        ]
+        // platformB: [
+        //     './e2e/wdio/platform/**/menu.e2e-spec.ts',
+            // './e2e/wdio/platform/**/menu-button.e2e-spec.ts',
+            // './e2e/wdio/platform/**/multi-input.e2e-spec.ts',
+            // './e2e/wdio/platform/**/object-list-item.e2e-spec.ts',
+            // './e2e/wdio/platform/**/object-marker.e2e-spec.ts',
+            // './e2e/wdio/platform/**/object-status.e2e-spec.ts',
+            // './e2e/wdio/platform/**/object-attribute.e2e-spec.ts',
+            // './e2e/wdio/platform/**/panel.e2e-spec.ts',
+            // './e2e/wdio/platform/**/radio-button-group.e2e-spec.ts',
+            // './e2e/wdio/platform/**/search.e2e-spec.ts',
+            // './e2e/wdio/platform/**/slider.e2e-spec.ts',
+            // './e2e/wdio/platform/**/split-menu-button.e2e-spec.ts',
+            // './e2e/wdio/platform/**/standard-list-item.e2e-spec.ts',
+            // './e2e/wdio/platform/**/step-input.e2e-spec.ts',
+            // './e2e/wdio/platform/**/switch.e2e-spec.ts',
+            // './e2e/wdio/platform/**/textarea.e2e-spec.ts',
+            // './e2e/wdio/platform/**/thumbnail.e2e-spec.ts',
+            // './e2e/wdio/platform/**/value-help-dialog.e2e-spec.ts',
+            // './e2e/wdio/platform/**/time-picker.e2e-spec.ts',
+        // ]
     },
     // ============
     // Capabilities
@@ -94,87 +91,99 @@ exports.config = {
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://docs.saucelabs.com/reference/platforms-configurator
     //
+
+
     capabilities: [
+        {
+            browserName: process.env.browser,
+            // browserVersion: 'latest',
+        }
+    ],
+    //
+    //     {
+    //         browserName: process.env.matrix.browser,
+    //         browserVersion: 'latest',
+    //     }
         // {
         //     browserName: 'internet explorer',
         //     browserVersion: 'latest',
         //     platformName: 'Windows 10',
         //     'sauce:options': {
         //         screenResolution: '1920x1080',
-        //         name: 'e2e-win-internet-explorer ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
+        //         name: 'e2e-win-internet-explorer ' + process.env.GITHUB_HEAD_REF,
         //         requireWindowFocus: true,
         //     }
         // },
-        {
-            browserName: 'MicrosoftEdge',
-            browserVersion: 'latest',
-            platformName: 'Windows 10',
-            acceptInsecureCerts: true,
-            'sauce:options': {
-                screenResolution: '1920x1080',
-                name: 'e2e-win-edge ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-            }
-        },
-        {
-            browserName: 'firefox',
-            browserVersion: 'latest',
-            platformName: 'Windows 10',
-            acceptInsecureCerts: true,
-            'sauce:options': {
-                name: 'e2e-win-firefox ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-                screenResolution: '1920x1080',
-            }
-        },
-        {
-            browserName: 'chrome',
-            browserVersion: 'latest',
-            platformName: 'Windows 10',
-            acceptInsecureCerts: true,
-            'sauce:options': {
-                screenResolution: '1920x1080',
-                name: 'e2e-win-chrome ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-            }
-        },
-        {
-            browserName: 'chrome',
-            platformName: 'macOS 10.15',
-            browserVersion: 'latest',
-            acceptInsecureCerts: true,
-            'sauce:options': {
-                name: 'e2e-MAC-chrome ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-                screenResolution: '1920x1440',
-            }
-        },
-        {
-            browserName: 'firefox',
-            platformName: 'macOS 10.15',
-            browserVersion: 'latest',
-            acceptInsecureCerts: true,
-            'sauce:options': {
-                screenResolution: '1920x1440',
-                name: 'e2e-MAC-firefox ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-            }
-        },
-        {
-            browserName: 'MicrosoftEdge',
-            platformName: 'macOS 10.15',
-            browserVersion: 'latest',
-            acceptInsecureCerts: true,
-            'sauce:options': {
-                screenResolution: '1920x1440',
-                name: 'e2e-MAC-Edge ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
-            }
-        },
+        // {
+        //     browserName: 'MicrosoftEdge',
+        //     browserVersion: 'latest',
+        //     platformName: 'Windows 10',
+        //     acceptInsecureCerts: true,
+        //     'sauce:options': {
+        //         screenResolution: '1920x1080',
+        //         name: 'e2e-win-edge ' + process.env.GITHUB_HEAD_REF,
+        //     }
+        // },
+        // {
+        //     browserName: 'firefox',
+        //     browserVersion: 'latest',
+        //     platformName: 'Windows 10',
+        //     acceptInsecureCerts: true,
+        //     'sauce:options': {
+        //         name: 'e2e-win-firefox ' + process.env.GITHUB_HEAD_REF,
+        //         screenResolution: '1920x1080',
+        //     }
+        // },
+        // {
+        //     browserName: 'chrome',
+        //     browserVersion: 'latest',
+        //     platformName: 'Windows 10',
+        //     acceptInsecureCerts: true,
+        //     'sauce:options': {
+        //         screenResolution: '1920x1080',
+        //         name: 'e2e-win-chrome ' + process.env.GITHUB_HEAD_REF,
+        //     }
+        // },
+        // {
+        //     browserName: 'chrome',
+        //     platformName: 'macOS 10.15',
+        //     browserVersion: 'latest',
+        //     acceptInsecureCerts: true,
+        //     'sauce:options': {
+        //         name: 'e2e-MAC-chrome ' + process.env.GITHUB_HEAD_REF,
+        //         screenResolution: '1920x1440',
+        //     }
+        // },
+        // {
+        //     browserName: 'firefox',
+        //     platformName: 'macOS 10.15',
+        //     browserVersion: 'latest',
+        //     acceptInsecureCerts: true,
+        //     'sauce:options': {
+        //         screenResolution: '1920x1440',
+        //         name: 'e2e-MAC-firefox ' + process.env.GITHUB_HEAD_REF,
+        //     }
+        // },
+        // {
+        //     browserName: 'MicrosoftEdge',
+        //     platformName: 'macOS 10.15',
+        //     browserVersion: 'latest',
+        //     acceptInsecureCerts: true,
+        //     'sauce:options': {
+        //         screenResolution: '1920x1440',
+        //         name: 'e2e-MAC-Edge ' + process.env.GITHUB_HEAD_REF,
+        //     }
+        // },
         // {
         //     browserName: 'safari',
         //     browserVersion: '13.1',
         //     platformName: 'macOS 10.15',
         //     'sauce:options': {
         //         screenResolution: '1920x1440',
-        //         name: 'e2e-MAC-safari ' + process.env.TRAVIS_BUILD_ID,
+        //         name: 'e2e-MAC-safari ' + process.env.GITHUB_HEAD_REF,
         //     }
         // }
-    ],
+    // ],
     //
     // ===================
     // Test Configurations
@@ -206,7 +215,7 @@ exports.config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: 'https://sap.dev:4200/',
+    baseUrl: 'http://localhost:4200/',
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 30000,
@@ -224,10 +233,6 @@ exports.config = {
     // commands. Instead, they hook themselves up into the test process.
     // services: ['chromedriver'],
     services: [
-        ['sauce', {
-            sauceConnect: true,
-            connectRetries: 2,
-        }],
         ['image-comparison',
             // The options
             {
@@ -346,7 +351,10 @@ exports.config = {
         }, true);
 
         browser.resetUrl = 'about:blank';
-        browser.maximizeWindow();
+        // browser.maximizeWindow();
+        // driver.maximizeWindow();
+        start.maximizeWindow();
+        driver.manage().window().maximize();
     },
 
 //     const processedConfig = await browser.getProcessedConfig();

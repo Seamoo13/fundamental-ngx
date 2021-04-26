@@ -1,0 +1,185 @@
+name: on-pull-request
+# Controls when the action will run.
+on: pull_request
+
+# Allows you to run this workflow manually from the Actions tab
+#  workflow_dispatch:
+env:
+  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+  GITHUB_HEAD_REF: ${{ GITHUB.HEAD_REF }}
+
+jobs:
+  build_and_cache:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ macos-10.15, windows-latest, ubuntu-latest ]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.18.4
+      - uses: actions/cache@v2.1.4
+        id: cache-build
+        with:
+          path: |
+            ~/.npm
+            node_modules
+            dist
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+
+#      - name: install brew on Mac
+#        if: steps.cache-build.outputs.cache-hit != 'true' && matrix.os == 'macos-10.15'
+#        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+#      - name: install FF on Mac
+#        if: steps.cache-build.outputs.cache-hit != 'true' && matrix.browser == 'firefox' && matrix.os == 'macos-10.15'
+#        run: brew install --cask firefox && brew install geckodriver
+
+      - name: install dependencies
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: build all
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm run build-all
+
+      - name: lint and test
+        if: steps.cache-build.outputs.cache-hit != 'true' && matrix.os == 'macos-10.15'
+        run: bash ./ci-scripts/test-lint.sh && npm run test:coveralls && npm run build-pack-library
+
+#      - name: build pack library windows
+#        if: matrix.os == 'windows-latest'
+#        run: npm run ng build core && ng build platform
+
+#  run_platform_unit_tests:
+#    runs-on: ubuntu-latest
+#    needs: build_and_cache
+#    steps:
+#      - uses: actions/checkout@v2.3.4
+#      - uses: actions/cache@v2.1.4
+#        id: cache-build
+#        with:
+#          path: |
+#            ~/.npm
+#             node_modules
+#             dist
+#          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#          restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#
+#      - name: build all
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+#        run: npm run build-all
+#
+#      - name: install dependencies
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+#        run: npm ci
+#
+#      - name: run platform unit tests
+#        run: npm run test:platform
+#
+#  run_core_unit_tests:
+#    runs-on: ubuntu-latest
+#    needs: build_and_cache
+#    steps:
+#      - uses: actions/checkout@v2.3.4
+#      - uses: actions/cache@v2.1.4
+#        id: cache-build
+#        with:
+#          path: |
+#            ~/.npm
+#             node_modules
+#             dist
+#          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#          restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#
+#      - name: build all
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+#        run: npm run build-all
+#
+#      - name: install dependencies
+#        if: steps.cache-build.outputs.cache-hit != 'true'
+#        run: npm ci
+#
+#      - name: run core unit tests
+#        run: npm run test:core
+
+  github_direct_e2e_tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-10.15, windows-latest]
+        browser: [firefox, chrome, edge]
+        screen: [1920x1440, 1920x1080]
+        exclude:
+          # skip running resolution 1920x1440 on Windows, 1920x1080 on Mac
+          - os: windows-latest
+            screen: 1920x1440
+          - os: macos-10.15
+            screen: 1920x1080
+
+    runs-on: ${{ matrix.os }}
+    needs: build_and_cache
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.18.4
+      - uses: actions/cache@v2.1.4
+        id: cache-build
+        with:
+          path: |
+            ~/.npm
+            node_modules
+            dist
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#      - uses: browser-actions/setup-chrome@latest
+#      - uses: browser-actions/setup-edge@latest
+
+#      - name: install brew on Mac
+#        if: steps.cache-build.outputs.cache-hit != 'true' && matrix.os == 'macos-10.15'
+#        run: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+#
+#      - name: install FF on Mac
+#        if: matrix.browser == 'firefox' && matrix.os == 'macos-10.15'
+#        run: brew install --cask firefox && brew install geckodriver
+#      - name: FF
+#        uses: ./
+#        with:
+#          working-directory: /usr/local/opt/geckodriver/bin
+#          browser: firefox
+
+      - name: install dependencies
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm ci
+
+      - name: build all
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: npm run build-all
+
+      - name: lint and test
+        if: steps.cache-build.outputs.cache-hit != 'true' && matrix.os == 'macos-10.15'
+        run: bash ./ci-scripts/test-lint.sh && npm run test:coveralls && npm run build-pack-library
+
+#      - name: run browser
+#        run: echo $browser + $size
+#        env:
+#          browser: ${{ matrix.browser }}
+#          size: ${{ matrix.screen }}
+#      - name: install chrome windows
+#        if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
+#        uses: browser-actions/setup-chrome@latest
+#
+#      - name: run chrome windows
+#        if: matrix.os == 'windows-latest' && matrix.browser == 'chrome'
+#        run: chrome --version
+
+      - name: Run platform A e2e tests
+        run: npm run e2e:wdio:serve && npm run e2e:wdio:test
+        env:
+          browser: ${{ matrix.browser }}
+          size: ${{ matrix.screen }}

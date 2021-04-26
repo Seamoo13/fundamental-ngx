@@ -27,6 +27,28 @@ exports.config = {
     exclude: [
         './e2e/wdio/**/checkbox-group.e2e-spec.ts',
     ],
+
+    suites: {
+        platformA: [
+            './e2e/wdio/platform/**/action-bar.e2e-spec.ts',
+            // './e2e/wdio/platform/**/action-list-item.e2e-spec.ts',
+            // './e2e/wdio/platform/**/approval-flow.e2e-spec.ts',
+            // './e2e/wdio/platform/**/checkbox.e2e-spec.ts',
+            // './e2e/wdio/platform/**/checkbox-group.e2e-spec.ts',
+            // './e2e/wdio/platform/**/combobox.e2e-spec.ts',
+            // './e2e/wdio/platform/**/date-picker.e2e-spec.ts',
+            // './e2e/wdio/platform/**/date-time-picker.e2e-spec.ts',
+            // './e2e/wdio/platform/**/display-list-item.e2e-spec.ts',
+            // './e2e/wdio/platform/**/dynamic-page-layout.e2e-spec.ts',
+            // './e2e/wdio/platform/**/feed-input.e2e-spec.ts',
+            // './e2e/wdio/platform/**/file-uploader.e2e-spec.ts',
+            // './e2e/wdio/platform/**/info-label.e2e-spec.ts',
+            // './e2e/wdio/platform/**/input.e2e-spec.ts',
+            // './e2e/wdio/platform/**/input-group.e2e-spec.ts',
+            // './e2e/wdio/platform/**/link.e2e-spec.ts',
+            // './e2e/wdio/platform/**/list.e2e-spec.ts',
+        ],
+    },
     //
     // ============
     // Capabilities
@@ -43,13 +65,19 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 10,
+    maxInstances: 20,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://docs.saucelabs.com/reference/platforms-configurator
     //
     capabilities: [
+        {
+            browserName: process.env.browser,
+            browserVersion: 'latest',
+            platformName: process.env.os,
+            acceptInsecureCerts: true,
+        }
         // {
         //     browserName: 'internet explorer',
         //     browserVersion: 'latest',
@@ -90,15 +118,15 @@ exports.config = {
         //         name: 'e2e-win-chrome ' + process.env.TRAVIS_BUILD_ID + ' ' + process.env.TRAVIS_PULL_REQUEST_BRANCH,
         //     }
         // },
-        {
-            browserName: 'chrome',
-            platformName: 'macOS 10.15',
-            browserVersion: 'latest',
-            acceptInsecureCerts: true,
-            'goog:chromeOptions': {
-                args: ['--window-size=1920,1417', '--headless']
-            },
-        },
+        // {
+        //     browserName: 'chrome',
+        //     platformName: 'macOS 10.15',
+        //     browserVersion: 'latest',
+        //     acceptInsecureCerts: true,
+        //     'goog:chromeOptions': {
+        //         args: ['--window-size=1920,1417', '--headless']
+        //     },
+        // },
         // {
         //     browserName: 'firefox',
         //     platformName: 'macOS 10.15',
@@ -160,7 +188,7 @@ exports.config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: 'http://localhost:4200/',
+    baseUrl: 'https://sap.dev:4200/',
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 30000,
@@ -200,7 +228,7 @@ exports.config = {
     framework: 'jasmine',
     //
     // The number of times to retry the entire specfile when it fails as a whole
-     specFileRetries: 0,
+     specFileRetries: 2,
     //
     // Delay in seconds between the spec file retry attempts
      specFileRetriesDelay: 0,
@@ -213,13 +241,13 @@ exports.config = {
     // see also: https://webdriver.io/docs/dot-reporter.html
     // reporters: ['spec' , []],
 
-    reporters: [['spec', {
-        symbols: { passed: '[PASS]', failed: '[FAIL]' }
-    }], ['allure', {
-        outputDir: 'allure-results',
-        disableWebdriverStepsReporting: true,
-        disableWebdriverScreenshotsReporting: true
-    }]],
+    // reporters: [['spec', {
+    //     symbols: { passed: '[PASS]', failed: '[FAIL]' }
+    // }], ['allure', {
+    //     outputDir: 'allure-results',
+    //     disableWebdriverStepsReporting: true,
+    //     disableWebdriverScreenshotsReporting: true
+    // }]],
 
     jasmineNodeOpts: {
         isVerbose: true,
