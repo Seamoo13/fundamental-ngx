@@ -16,7 +16,7 @@ import {
     refreshPage,
     scrollIntoView,
     waitForPresent,
-    waitForElDisplayed, browserIsFirefox
+    waitForElDisplayed, browserIsFirefox, getElementAriaLabel, getElementTitle
 } from '../../driver/wdio';
 
 describe('Checkbox test suite', () => {
@@ -33,7 +33,9 @@ describe('Checkbox test suite', () => {
         tristateCheckboxParis,
         errorCheckboxes,
         presenceCheckbox,
-        accessibilityCheckboxes
+        accessibilityCheckboxes,
+        disabledAccessibilityCheckbox,
+        disabledAccessibilityCheckboxLabel,
 
     } = new CheckboxPO();
     const checkboxPage = new CheckboxPO();
@@ -63,7 +65,7 @@ describe('Checkbox test suite', () => {
             checkFocusState(binaryTempCheckbox);
         });
 
-        it('should check binary checkbox in reactive/model driven form', () => {
+        xit('should check binary checkbox in reactive/model driven form', () => {
             if (browserIsIEorSafari()) {
                 console.log('Skip for Safari and IE');
                 return;
@@ -84,7 +86,7 @@ describe('Checkbox test suite', () => {
     });
 
     describe('Check checkbox used without form examples', () => {
-        it('should check binary checkbox with value', () => {
+        xit('should check binary checkbox with value', () => {
             if (browserIsIEorSafari()) {
                 console.log('Skip for Safari and IE');
                 return;
@@ -98,7 +100,7 @@ describe('Checkbox test suite', () => {
             checkFocusState(checkboxWithoutForm);
         });
 
-        it('should check binary checkbox without value', () => {
+        xit('should check binary checkbox without value', () => {
             if (browserIsIEorSafari()) {
                 console.log('Skip for Safari and IE');
                 return;
@@ -123,7 +125,7 @@ describe('Checkbox test suite', () => {
         });
     });
 
-    describe('Check checkboxes with value property examples', () => {
+    xdescribe('Check checkboxes with value property examples', () => {
         it('should check template driven form', () => {
             if (browserIsIEorSafari()) {
                 console.log('Skip for Safari and IE');
@@ -150,7 +152,7 @@ describe('Checkbox test suite', () => {
     });
 
     describe('Check Tristate Checkbox With Value Property and Without Value Property', () => {
-        it('should check reactive form', () => {
+        xit('should check reactive form', () => {
             if (browserIsIEorSafari()) {
                 console.log('Skip for Safari and IE');
                 return;
@@ -162,7 +164,7 @@ describe('Checkbox test suite', () => {
             checkFocusState(tristateCheckboxes);
         });
 
-        it('should check template form', () => {
+        xit('should check template form', () => {
             if (browserIsIEorSafari()) {
                 console.log('Skip for Safari and IE');
                 return;
@@ -175,7 +177,7 @@ describe('Checkbox test suite', () => {
             checkFocusState(tristateCheckboxes, 8);
         });
 
-        it('should check tristate checkbox with multiple checkboxes', () => {
+        xit('should check tristate checkbox with multiple checkboxes', () => {
             if (browserIsIEorSafari()) {
                 console.log('Skip for Safari and IE');
                 return;
@@ -250,8 +252,7 @@ describe('Checkbox test suite', () => {
 
     xdescribe('Check Accessibility on checkbox examples', () => {
         it('should check a11y checkboxes', () => {
-            expect(getAttributeByName(accessibilityCheckboxes, 'aria-label'))
-                .toEqual(a11yCheckboxAriaLabel);
+            expect(getElementAriaLabel(accessibilityCheckboxes)).toEqual(a11yCheckboxAriaLabel);
             expect(getAttributeByName(accessibilityCheckboxes, 'aria-disabled')).toBe('false');
 
             expect(getAttributeByName(accessibilityCheckboxes, 'aria-labelledby', 1))
@@ -260,10 +261,9 @@ describe('Checkbox test suite', () => {
         });
 
         it('should check the disabled accessibility checkbox', () => {
-            checkIfDisabled(checkboxPage.disabledAccessibilityCheckbox, 'ng-reflect-is-disabled', 'true');
-            expect(getAttributeByName(checkboxPage.disabledAccessibilityCheckbox, 'aria-disabled')).toBe('true');
-            expect(getAttributeByName(checkboxPage.disabledAccessibilityCheckboxLabel, 'title'))
-                .toEqual(disabledCheckboxTitle);
+            checkIfDisabled(disabledAccessibilityCheckbox, 'ng-reflect-is-disabled', 'true');
+            expect(getAttributeByName(disabledAccessibilityCheckbox, 'aria-disabled')).toBe('true');
+            expect(getElementTitle(disabledAccessibilityCheckboxLabel)).toEqual(disabledCheckboxTitle);
         });
     });
 
